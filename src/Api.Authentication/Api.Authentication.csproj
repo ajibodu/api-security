@@ -4,14 +4,14 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.0.25</Version>
-    <Title>Api.Authentication</Title>
-    <Authors>CrowdCargo</Authors>
-    <PackageId>CrowdCargo.Api.Authentication</PackageId>
-    <PackageTags>MassTransit;EF;EFCore;EntityFramework;EntityFrameworkCore</PackageTags>
-    <Description>MassTransit Entity Framework Core persistence support; $(Description)</Description>
-    <PackageProjectUrl>https://github.com/crowd-cargo/api-authentication</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/crowd-cargo/api-authentication</RepositoryUrl>
+    <Version>0.0.1</Version>
+    <Title>Api.Security.Authentication</Title>
+    <Authors>Emmanuel Ajibodu</Authors>
+    <PackageId>Dotnet.Api.Security.Authentication</PackageId>
+    <PackageTags>Authentication;Security;Api</PackageTags>
+    <Description>Simple API Authentication</Description>
+    <PackageProjectUrl>https://github.com/ajibodu/api-security</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ajibodu/api-security</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
