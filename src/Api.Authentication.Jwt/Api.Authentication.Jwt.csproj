@@ -4,6 +4,14 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Version>0.0.1</Version>
+    <Title>Api.Security.Authentication.Jwt</Title>
+    <Authors>Emmanuel Ajibodu</Authors>
+    <PackageId>Dotnet.Api.Security.Authentication.Jwt</PackageId>
+    <PackageTags>Authentication;Security;Api;Jwt</PackageTags>
+    <Description>Simple API Authentication with JWT</Description>
+    <PackageProjectUrl>https://github.com/ajibodu/api-security</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ajibodu/api-security</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
