@@ -1,0 +1,31 @@
+name: PR Checker
+
+env:
+  SRC_WORKING_DIR: "src"
+  
+on:
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+          
+      - name: Restore dependencies
+        working-directory: ${{ env.SRC_WORKING_DIR }}
+        run: dotnet restore
+        
+      - name: Build
+        working-directory: ${{ env.SRC_WORKING_DIR }}
+        run: dotnet build --no-restore
+    
