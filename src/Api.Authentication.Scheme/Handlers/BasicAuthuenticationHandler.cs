@@ -30,15 +30,22 @@ public class BasicAuthuenticationHandler(
             var username = credentials[0];
             var password = credentials[1];
 
-            if (!await authenticationService.Authenticate(username, password))
-            {
+            var authResult = await authenticationService.Authenticate(username, password);
+            if (!authResult.IsValid)
                 return AuthenticateResult.Fail("Invalid Username or Password");
-            }
 
-            var claims = new[] {
-                new Claim(ClaimTypes.NameIdentifier, username),
-                new Claim(ClaimTypes.Name, username)
-            };
+            Claim[] claims;
+            if (authResult.Claims == null)
+            {
+                claims =
+                [
+                    new Claim(ClaimTypes.NameIdentifier, username),
+                    new Claim(ClaimTypes.Name, username)
+                ];
+            }else
+            {
+                 claims = authResult.Claims.Select(c => new Claim(c.Key, c.Value)).ToArray();
+            }
 
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);

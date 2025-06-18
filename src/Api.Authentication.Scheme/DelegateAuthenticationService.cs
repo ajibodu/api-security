@@ -1,16 +1,18 @@
+using Api.Authentication.Scheme.Models;
+
 namespace Api.Authentication.Scheme;
 
-public class DelegateBasicAuthenticationService(Func<string, string, Task<bool>> authenticateFunc) : IBasicAuthenticationService
+public class DelegateBasicAuthenticationService(Func<string, string, Task<AuthResponse>> authenticateFunc) : IBasicAuthenticationService
 {
-    public Task<bool> Authenticate(string username, string password)
+    public Task<AuthResponse> Authenticate(string username, string password)
     {
         return authenticateFunc(username, password);
     }
 }
 
-public class DelegateKeyAuthenticationService(Func<string, Task<bool>> authenticateFunc) : IKeyAuthenticationService
+public class DelegateKeyAuthenticationService(Func<string, Task<AuthResponse>> authenticateFunc) : IKeyAuthenticationService
 {
-    public Task<bool> Authenticate(string key)
+    public Task<AuthResponse> Authenticate(string key)
     {
         return authenticateFunc(key);
     }

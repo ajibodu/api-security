@@ -1,6 +1,8 @@
+using Api.Authentication.Scheme.Models;
+
 namespace Api.Authentication.Scheme;
 
 public interface IBasicAuthenticationService
 {
-    Task<bool> Authenticate(string username, string password);
+    public Task<AuthResponse> Authenticate(string username, string password);
 }

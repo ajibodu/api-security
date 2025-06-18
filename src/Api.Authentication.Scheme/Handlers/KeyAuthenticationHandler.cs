@@ -19,10 +19,23 @@ public class KeyAuthenticationHandler(
         if (!Request.Headers.TryGetValue(Options.HeaderName, out var headerValue))
             return AuthenticateResult.Fail("Missing API Key");
 
-        if (!await authenticationService.Authenticate(headerValue))
+        var authResult = await authenticationService.Authenticate(headerValue);
+        if (!authResult.IsValid)
             return AuthenticateResult.Fail("Invalid API Key");
         
-        var claims = new[] { new Claim(ClaimTypes.Name, "AuthenticatedUser") };
+        Claim[] claims;
+        if (authResult.Claims == null)
+        {
+            claims =
+            [
+                new Claim(ClaimTypes.Name, "AuthenticatedUser"),
+                new Claim(Options.HeaderName, headerValue)
+            ];
+        }else
+        {
+            claims = authResult.Claims.Select(c => new Claim(c.Key, c.Value)).ToArray();
+        }
+        
         var identity = new ClaimsIdentity(claims, Scheme.Name);
         var principal = new ClaimsPrincipal(identity);
         var ticket = new AuthenticationTicket(principal, Scheme.Name);

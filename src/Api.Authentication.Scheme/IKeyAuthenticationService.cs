@@ -1,6 +1,8 @@
+using Api.Authentication.Scheme.Models;
+
 namespace Api.Authentication.Scheme;
 
 public interface IKeyAuthenticationService
 {
-    Task<bool> Authenticate(string key);
+    Task<AuthResponse> Authenticate(string key);
 }
