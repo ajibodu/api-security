@@ -1,4 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Api.Authentication.Core;
 using Api.Authentication.Core.DependencyInjection;

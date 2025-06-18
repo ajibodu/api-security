@@ -10,54 +10,19 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Authentication.Jwt;
 
-public class CurrentUser : ICurrentUser
+public class CurrentUser : BaseCurrentUser, ICurrentUser
 {
     private readonly ISessionManager _sessionManager = null!;
     private readonly JwtConfiguration _jwtConfiguration = null!;
-    private readonly IEnumerable<Claim> _claims = null!;
 
-    public CurrentUser(IHttpContextAccessor context, IOptions<JwtConfiguration> configuration, ISessionManager? sessionManager = null)
+    public CurrentUser(IHttpContextAccessor context, IOptions<JwtConfiguration> configuration, ISessionManager? sessionManager = null) : base(context)
     {
         if (context?.HttpContext == null)
             return;
-        _claims = context.HttpContext.User.Claims;
         _jwtConfiguration = configuration.Value;
 
         if (_jwtConfiguration.Session != null)
             _sessionManager = sessionManager ?? throw new NullReferenceException($"Mission Implementation of {nameof(ISessionManager)}");
-    }
-    
-    public string? GetClaimValue(string claimType)
-    {
-        return _claims.FirstOrDefault(c => c.Type == claimType)?.Value;
-    }
-    
-    public IEnumerable<string> GetClaimValues(string claimType)
-    {
-        return _claims.Where(c => c.Type == claimType).Select(c => c.Value);
-    }
-    
-    public string GetRequiredClaimValue(string claimType)
-    {
-        return _claims.First(c => c.Type == claimType).Value;
-    }
-
-    public T? GetClaimValue<T>(string claimType, Func<string, T> converter)
-    {
-        var value = _claims.FirstOrDefault(c => c.Type == claimType)?.Value;
-        return value != null ? converter(value) : default;
-    }
-    
-    public IEnumerable<T> GetClaimsValue<T>(string claimType, Func<IEnumerable<string>, IEnumerable<T>> converter)
-    {
-        var value = _claims.Where(c => c.Type == claimType).Select(c => c.Value);
-        return converter(value);
-    }
-    
-    public T GetRequiredClaimValue<T>(string claimType, Func<string, T> converter)
-    {
-        var value = _claims.First(c => c.Type == claimType).Value;
-        return converter(value);
     }
     
     public DateTimeOffset IssuedDateTime => GetRequiredClaimValue(JwtRegisteredClaimNames.Iat, value => DateTimeOffset.FromUnixTimeSeconds(long.Parse(value)));
