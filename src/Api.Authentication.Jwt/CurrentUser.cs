@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Api.Authentication.Core;
+using Api.Authentication.Jwt.Configurations;
 using Api.Authentication.Jwt.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -94,6 +95,7 @@ public class CurrentUser : ICurrentUser
         securityClaims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
         securityClaims.Add(new Claim(JwtRegisteredClaimNames.Nbf, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), CustomClaimValueTypes.Integer64));
         securityClaims.Add(new Claim(JwtRegisteredClaimNames.Sub, uniqueClaim.Value));
+        securityClaims.Add(new Claim(SystemClaim.Identifyer, uniqueClaim.Value));
 
 
         var token = new JwtSecurityToken(
@@ -167,7 +169,7 @@ public class CurrentUser : ICurrentUser
         if(_sessionManager == null)
             throw new InvalidOperationException($"Mission Implementation of {nameof(ISessionManager)}");
         
-        await _sessionManager.RemoveAsync(GetRequiredClaimValue(JwtRegisteredClaimNames.Sub));
+        await _sessionManager.RemoveAsync(GetRequiredClaimValue(SystemClaim.Identifyer));
     }
     
     private readonly HashSet<string> _defaultClaimTypesToExclude =

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 
-namespace Api.Authentication.Scheme;
+namespace Api.Authentication.Scheme.Configurations;
 
 public interface IBasicConfiguration
 {

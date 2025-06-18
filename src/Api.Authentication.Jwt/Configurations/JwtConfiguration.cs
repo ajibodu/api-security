@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace Api.Authentication.Jwt.Models;
+namespace Api.Authentication.Jwt.Configurations;
 
 public class JwtConfiguration
 {

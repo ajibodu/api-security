@@ -1,10 +1,11 @@
-using Microsoft.AspNetCore.Authentication;
+using Api.Authentication.Scheme.Configurations;
+using Api.Authentication.Scheme.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 using AuthenticationBuilder = Api.Authentication.Core.AuthenticationBuilder;
 
-namespace Api.Authentication.Scheme;
+namespace Api.Authentication.Scheme.DependencyInjection;
 
-public static class SchemeAuthentication
+public static class AuthenticationBuilderExtensions
 {
     public static void WithBasicScheme(this AuthenticationBuilder builder, IBasicConfiguration configuration, string schemeName = "Basic")
     {

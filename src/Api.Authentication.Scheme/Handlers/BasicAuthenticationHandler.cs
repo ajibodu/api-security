@@ -2,11 +2,12 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
+using Api.Authentication.Scheme.Configurations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Api.Authentication.Scheme;
+namespace Api.Authentication.Scheme.Handlers;
 
 public class BasicAuthenticationHandler(
     IOptionsMonitor<BasicConfiguration> options,

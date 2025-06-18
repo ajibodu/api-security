@@ -1,15 +1,16 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Api.Authentication.Core;
-using Api.Authentication.Jwt.Models;
+using Api.Authentication.Core.DependencyInjection;
+using Api.Authentication.Jwt.Configurations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Api.Authentication.Jwt;
+namespace Api.Authentication.Jwt.DependencyInjection;
 
-public static class JwtAuthentication
+public static class AuthenticationBuilderExtensions
 {
     public static void WithJwtBearer(this AuthenticationBuilder builder, AuthReWriteConfig? reWriteConfig = null)
     {
@@ -27,6 +28,8 @@ public static class JwtAuthentication
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(options =>
         {
+            // Disable automatic claim type conversion (so claim name remains as was initially set)
+            //options.MapInboundClaims = false;
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
@@ -54,7 +57,7 @@ public static class JwtAuthentication
             if (jwtConfiguration.Session != null)
             {
                 var sessionManager = context.HttpContext.RequestServices.GetRequiredService<ISessionManager>();
-                var userId = context.Principal?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+                var userId = context.Principal?.FindFirst(SystemClaim.Identifyer)?.Value;
                 var token = context.HttpContext.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last(); 
                 
                 if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
