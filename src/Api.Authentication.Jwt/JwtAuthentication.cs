@@ -11,10 +11,10 @@ namespace Api.Authentication.Jwt;
 
 public static class JwtAuthentication
 {
-    public static void WithJwt(this AuthenticationBuilder builder, AuthReWriteConfig? reWriteConfig = null)
+    public static void WithJwtBearer(this AuthenticationBuilder builder, AuthReWriteConfig? reWriteConfig = null)
     {
-        var jwtConfiguration = builder.Configuration.GetSection("JwtConfiguration").Get<Configuration>();
-        builder.Services.Configure<Configuration>(builder.Configuration.GetSection("JwtConfiguration"));
+        var jwtConfiguration = builder.Configuration.GetSection(nameof(JwtConfiguration)).Get<JwtConfiguration>();
+        builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection(nameof(JwtConfiguration)));
         
         builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         
@@ -47,11 +47,11 @@ public static class JwtAuthentication
         });
     }
     
-    private static Func<TokenValidatedContext, Task> HandleTokenValidated(Configuration configuration)
+    private static Func<TokenValidatedContext, Task> HandleTokenValidated(JwtConfiguration jwtConfiguration)
     {
         return async context =>
         {
-            if (configuration.Session != null)
+            if (jwtConfiguration.Session != null)
             {
                 var sessionManager = context.HttpContext.RequestServices.GetRequiredService<ISessionManager>();
                 var userId = context.Principal?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
@@ -75,7 +75,7 @@ public static class JwtAuthentication
                     return;
                 }
 
-                await sessionManager.UpdateActivityAsync(userId, configuration.Session.ActivityWindowMinutes);
+                await sessionManager.UpdateActivityAsync(userId, jwtConfiguration.Session.ActivityWindowMinutes);
             }
         };
     }

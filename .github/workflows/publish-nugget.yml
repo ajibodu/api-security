@@ -1,0 +1,68 @@
+name: Publish Nugget
+
+env:
+  PROJ_WORKING_DIR: "src/Api.Authentication"
+  NuGetDirectory: ${{ github.workspace}}/nuget
+  
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        working-directory: ${{ env.PROJ_WORKING_DIR }}
+        run: dotnet restore
+
+      - name: Build
+        working-directory: ${{ env.PROJ_WORKING_DIR }}
+        run: dotnet build --no-restore
+        
+      - name: Pack Nugget
+        working-directory: ${{ env.PROJ_WORKING_DIR }}
+        run: dotnet pack -c Release -o ${{ env.NuGetDirectory }}
+
+      # Publish the NuGet package as an artifact, so they can be used in the following jobs
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget
+          if-no-files-found: error
+          retention-days: 1
+          path: ${{ env.NuGetDirectory }}/*.nupkg
+  
+  publish:
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      # Download the NuGet package created in the previous job
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget
+          path: ${{ env.NuGetDirectory }}
+          
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.0.x
+          
+#      - name: Push to GitHub Packages
+#        run: dotnet nuget push "${{ env.NuGetDirectory }}/*.nupkg" --api-key "${{ secrets.GITHUB_TOKEN }}" --source https://nuget.pkg.github.com/crowd-cargo/index.json
+          
+      - name: Push to Nuget Packages
+        run: dotnet nuget push "${{ env.NuGetDirectory }}/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json
+  

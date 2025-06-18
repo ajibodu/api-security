@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>0.0.1</Version>
+    <Version>0.0.8</Version>
     <Title>Api.Security.Authentication.Jwt</Title>
     <Authors>Emmanuel Ajibodu</Authors>
     <PackageId>Dotnet.Api.Security.Authentication.Jwt</PackageId>

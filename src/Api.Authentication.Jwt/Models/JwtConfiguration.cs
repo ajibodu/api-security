@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Api.Authentication.Jwt.Models;
 
-public class Configuration
+public class JwtConfiguration
 {
     public required string SecretKey { get; set; }
     public required string Issuer { get; set; }
