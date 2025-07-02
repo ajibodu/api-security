@@ -21,6 +21,7 @@ public class CurrentUser : BaseCurrentUser, ICurrentUser
             return;
         _jwtConfiguration = configuration.Value;
 
+        // Only require sessionManager if Session is configured
         if (_jwtConfiguration.Session != null)
             _sessionManager = sessionManager ?? throw new NullReferenceException($"Mission Implementation of {nameof(ISessionManager)}");
     }
@@ -60,7 +61,7 @@ public class CurrentUser : BaseCurrentUser, ICurrentUser
         securityClaims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
         securityClaims.Add(new Claim(JwtRegisteredClaimNames.Nbf, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), CustomClaimValueTypes.Integer64));
         securityClaims.Add(new Claim(JwtRegisteredClaimNames.Sub, uniqueClaim.Value));
-        securityClaims.Add(new Claim(SystemClaim.Identifyer, uniqueClaim.Value));
+        securityClaims.Add(new Claim(SystemClaim.Identifier, uniqueClaim.Value));
 
 
         var token = new JwtSecurityToken(
@@ -134,7 +135,7 @@ public class CurrentUser : BaseCurrentUser, ICurrentUser
         if(_sessionManager == null)
             throw new InvalidOperationException($"Mission Implementation of {nameof(ISessionManager)}");
         
-        await _sessionManager.RemoveAsync(GetRequiredClaimValue(SystemClaim.Identifyer));
+        await _sessionManager.RemoveAsync(GetRequiredClaimValue(SystemClaim.Identifier));
     }
     
     private readonly HashSet<string> _defaultClaimTypesToExclude =

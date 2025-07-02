@@ -56,7 +56,7 @@ public static class AuthenticationBuilderExtensions
             if (jwtConfiguration.Session != null)
             {
                 var sessionManager = context.HttpContext.RequestServices.GetRequiredService<ISessionManager>();
-                var userId = context.Principal?.FindFirst(SystemClaim.Identifyer)?.Value;
+                var userId = context.Principal?.FindFirst(SystemClaim.Identifier)?.Value;
                 var token = context.HttpContext.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last(); 
                 
                 if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
@@ -86,7 +86,7 @@ public static class AuthenticationBuilderExtensions
     {
         return context =>
         {
-            // If the request is for hub...
+            // If the request is for signalR/websocket...
             var currentPath = context.HttpContext.Request.Path;
             if (reWriteConfig?.PathStrings != null && reWriteConfig.PathStrings.Any(path => currentPath.StartsWithSegments(path, StringComparison.OrdinalIgnoreCase)))
             {

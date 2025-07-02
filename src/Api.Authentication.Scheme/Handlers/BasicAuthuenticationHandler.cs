@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Api.Authentication.Scheme.Handlers;
 
-public class BasicAuthuenticationHandler(
+public class BasicAuthenticationHandler(
     IOptionsMonitor<AuthenticationSchemeOptions> options,
     ILoggerFactory logger,
     UrlEncoder encoder,

@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Api.Authentication.Jwt/Api.Authentication.Jwt.csproj" />
-    <ProjectReference Include="../Api.Authentication.Core/Api.Authentication.Core.csproj" />
+    <ProjectReference Include="..\..\src\Api.Authentication.Jwt\Api.Authentication.Jwt.csproj" />
   </ItemGroup>
+
 
 </Project>

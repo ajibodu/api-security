@@ -4,15 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using Api.Authentication.Jwt.Configurations;
 using Api.Authentication.Jwt.DependencyInjection;
-using Api.Authentication.Core;
+using Api.Authentication.Jwt;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 using Xunit;
+using AuthenticationBuilder = Api.Authentication.Core.AuthenticationBuilder;
 
-namespace Api.Authentication.Jwt.Tests;
+namespace Api.Authentication.Test.Jwt;
 
 public class AuthenticationBuilderExtensionsTests
 {
@@ -77,7 +81,7 @@ public class AuthenticationBuilderExtensionsTests
         var builder = GetBuilder();
         var rewriteConfig = new AuthReWriteConfig
         {
-            PathStrings = new[] { "/hub" },
+            PathStrings = ["/hub"],
             Token = new Mapping { From = Source.Query, Key = "access_token" },
             Headers = new Dictionary<string, Mapping> { { "X-Test", new Mapping { From = Source.Header, Key = "X-Test" } } }
         };

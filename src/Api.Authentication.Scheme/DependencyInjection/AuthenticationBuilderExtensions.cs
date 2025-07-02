@@ -20,7 +20,7 @@ public static class AuthenticationBuilderExtensions
         builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         
         builder.Services.AddAuthentication(schemeName)
-            .AddScheme<AuthenticationSchemeOptions, BasicAuthuenticationHandler>(schemeName, null);
+            .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(schemeName, null);
     }
     
     public static void WithBasicScheme(this AuthenticationBuilder builder, Func<string, string, Task<AuthResponse>> authenticateFunc, string schemeName = "Basic")
@@ -29,7 +29,7 @@ public static class AuthenticationBuilderExtensions
         builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         
         builder.Services.AddAuthentication(schemeName)
-            .AddScheme<AuthenticationSchemeOptions, BasicAuthuenticationHandler>(schemeName, null);
+            .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(schemeName, null);
     }
     
     public static void WithKeyScheme(this AuthenticationBuilder builder, SimpleKeyConfiguration configuration, string schemeName = "Basic")

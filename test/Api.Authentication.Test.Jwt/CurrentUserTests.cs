@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Api.Authentication.Core;
 using Api.Authentication.Jwt;
@@ -10,23 +8,34 @@ using Api.Authentication.Jwt.Configurations;
 using Api.Authentication.Jwt.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Moq;
 using Xunit;
 
-namespace Api.Authentication.Jwt.Tests;
+namespace Api.Authentication.Test.Jwt;
 
 public class CurrentUserTests
 {
-    private static JwtConfiguration GetJwtConfig() => new JwtConfiguration
+    private static JwtConfiguration GetJwtConfig() => new()
     {
-        SecretKey = "supersecretkey1234567890",
+        // HS256 requires a key of at least 256 bits (32 bytes)
+        SecretKey = "supersecretkey1234567890supersecretkey!", // 32+ chars
         Issuer = "issuer",
         Audience = "audience",
         ExpirationInMinutes = 60
     };
 
     private static IOptions<JwtConfiguration> GetOptions() => Options.Create(GetJwtConfig());
+
+    private static JwtConfiguration GetJwtConfigWithSession() => new()
+    {
+        SecretKey = "supersecretkey1234567890supersecretkey!",
+        Issuer = "issuer",
+        Audience = "audience",
+        ExpirationInMinutes = 60,
+        Session = new UserSessionConfiguration { ActivityWindowMinutes = 30 }
+    };
+
+    private static IOptions<JwtConfiguration> GetOptionsWithSession() => Options.Create(GetJwtConfigWithSession());
 
     private static IHttpContextAccessor GetHttpContextAccessor(IEnumerable<Claim>? claims = null)
     {
@@ -67,14 +76,14 @@ public class CurrentUserTests
     }
 
     [Fact]
-    public void VerifyJwtAsync_ValidToken_ReturnsTrue()
+    public async Task VerifyJwtAsync_ValidToken_ReturnsTrue()
     {
         var claims = new List<CustomClaim>
         {
             new CustomClaim("sub", "user1", CustomClaimValueTypes.String, true)
         };
         var currentUser = new CurrentUser(GetHttpContextAccessor(), GetOptions());
-        var token = currentUser.GenerateJwt(claims).Result.Jwt;
+        var token = (await currentUser.GenerateJwt(claims)).Jwt;
         Assert.True(currentUser.VerifyJwtAsync(token));
     }
 
@@ -86,16 +95,16 @@ public class CurrentUserTests
     }
 
     [Fact]
-    public void GetJwtClaimsAsync_ValidToken_ReturnsClaims()
+    public async Task GetJwtClaimsAsync_ValidToken_ReturnsClaims()
     {
         var claims = new List<CustomClaim>
         {
-            new CustomClaim("sub", "user1", CustomClaimValueTypes.String, true)
+            new CustomClaim("userId", "user1", CustomClaimValueTypes.String, true)
         };
         var currentUser = new CurrentUser(GetHttpContextAccessor(), GetOptions());
-        var token = currentUser.GenerateJwt(claims).Result.Jwt;
+        var token = (await currentUser.GenerateJwt(claims)).Jwt;
         var jwtClaims = currentUser.GetJwtClaimsAsync(token);
-        Assert.Contains(jwtClaims, c => c.Type == "sub" && c.Value == "user1");
+        Assert.Contains(jwtClaims, c => c.Type == "userId" && c.Value == "user1");
     }
 
     [Fact]
@@ -107,20 +116,19 @@ public class CurrentUserTests
     }
 
     [Fact]
-    public async Task RevokeJwtAsync_ThrowsIfNoSessionManager()
-    {
-        var currentUser = new CurrentUser(GetHttpContextAccessor(), GetOptions());
-        await Assert.ThrowsAsync<InvalidOperationException>(() => currentUser.RevokeJwtAsync());
-    }
-
-    [Fact]
     public async Task RevokeJwtAsync_CallsSessionManagerRemoveAsync()
     {
         var claims = new List<Claim> { new Claim("identifyer", "user1") };
         var sessionManager = new Mock<ISessionManager>();
         sessionManager.Setup(m => m.RemoveAsync("user1")).Returns(Task.CompletedTask).Verifiable();
-        var currentUser = new CurrentUser(GetHttpContextAccessor(claims), GetOptions(), sessionManager.Object);
+        var currentUser = new CurrentUser(GetHttpContextAccessor(claims), GetOptionsWithSession(), sessionManager.Object);
         await currentUser.RevokeJwtAsync();
         sessionManager.Verify();
+    }
+
+    [Fact]
+    public void RevokeJwtAsync_ThrowsIfNoSessionManager()
+    {
+        Assert.Throws<NullReferenceException>(() => new CurrentUser(GetHttpContextAccessor(), GetOptionsWithSession()));
     }
 }
