@@ -91,7 +91,7 @@ public class AuthenticationIntegrationTests
         // Arrange
         var jwtConfig = new JwtConfiguration
         {
-            SecretKey = "testkey1234567890",
+            SecretKey = "YourSuperSecretKeyShouldBeAtLeast32CharactersLong",
             Issuer = "issuer",
             Audience = "audience",
             ExpirationInMinutes = 60
@@ -114,7 +114,7 @@ public class AuthenticationIntegrationTests
         // Arrange
         var jwtConfig = new JwtConfiguration
         {
-            SecretKey = "testkey1234567890",
+            SecretKey = "YourSuperSecretKeyShouldBeAtLeast32CharactersLong",
             Issuer = "issuer",
             Audience = "audience",
             ExpirationInMinutes = 60
@@ -134,7 +134,7 @@ public class AuthenticationIntegrationTests
         // Arrange
         var jwtConfig = new JwtConfiguration
         {
-            SecretKey = "testkey1234567890",
+            SecretKey = "YourSuperSecretKeyShouldBeAtLeast32CharactersLong",
             Issuer = "issuer",
             Audience = "audience",
             ExpirationInMinutes = -1 // Expired token
@@ -155,7 +155,7 @@ public class AuthenticationIntegrationTests
         // Arrange
         var jwtConfig = new JwtConfiguration
         {
-            SecretKey = "testkey1234567890",
+            SecretKey = "YourSuperSecretKeyShouldBeAtLeast32CharactersLong",
             Issuer = "issuer",
             Audience = "audience",
             ExpirationInMinutes = 60,
@@ -186,7 +186,7 @@ public class AuthenticationIntegrationTests
         // Arrange
         var jwtConfig = new JwtConfiguration
         {
-            SecretKey = "testkey1234567890",
+            SecretKey = "YourSuperSecretKeyShouldBeAtLeast32CharactersLong",
             Issuer = "issuer",
             Audience = "audience",
             ExpirationInMinutes = 60,
@@ -215,7 +215,7 @@ public class AuthenticationIntegrationTests
         // Arrange
         var jwtConfig = new JwtConfiguration
         {
-            SecretKey = "testkey1234567890",
+            SecretKey = "YourSuperSecretKeyShouldBeAtLeast32CharactersLong",
             Issuer = "issuer",
             Audience = "audience",
             ExpirationInMinutes = 60
