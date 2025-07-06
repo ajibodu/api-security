@@ -4,6 +4,7 @@ using Api.Authentication.Jwt.DependencyInjection;
 using Api.Authentication.Jwt.Models;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using SampleApiWithJwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +45,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services
     .AddApiAuthentication(builder.Configuration)
     .WithJwtBearer();
+builder.Services.AddScoped<CurrentUserProperties>();
 
 builder.Services.AddAuthorization();
 

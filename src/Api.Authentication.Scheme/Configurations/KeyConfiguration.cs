@@ -12,8 +12,4 @@ public class KeyConfiguration : AuthenticationSchemeOptions, IKeyConfiguration
     public string HeaderName { get; set; }
 }
 
-public class SimpleKeyConfiguration
-{
-    public string HeaderName { get; set; }
-    public string HeaderValue { get; set; }
-}
+public record SimpleKeyConfiguration(string HeaderName, string HeaderValue);
