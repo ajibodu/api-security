@@ -15,8 +15,6 @@ on:
     secrets:
       NUGET_API_KEY:
         required: true
-      GITHUB_TOKEN:
-        required: false
 
 env:
   NuGetDirectory: ${{ github.workspace}}/nuget
