@@ -16,6 +16,10 @@ public static class AuthenticationBuilderExtensions
         var jwtConfiguration = builder.Configuration.GetSection(nameof(JwtConfiguration)).Get<JwtConfiguration>();
         builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection(nameof(JwtConfiguration)));
         
+        if (jwtConfiguration is null)
+            throw new ArgumentException(nameof(JwtConfiguration));
+        jwtConfiguration.EnsureIsValid();
+        
         builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         
         if(jwtConfiguration?.Session != null)
@@ -90,6 +94,15 @@ public static class AuthenticationBuilderExtensions
             var currentPath = context.HttpContext.Request.Path;
             if (reWriteConfig?.PathStrings != null && reWriteConfig.PathStrings.Any(path => currentPath.StartsWithSegments(path, StringComparison.OrdinalIgnoreCase)))
             {
+                var tokenProvided = reWriteConfig.Token != null;
+                var headersProvided = reWriteConfig.Headers is { Count: > 0 };
+            
+                if (!tokenProvided && !headersProvided)
+                {
+                    context.Fail("Either a token or at least one header must be provided in the rewrite configuration.");
+                    return Task.CompletedTask;
+                }
+            
                 if (reWriteConfig.Token != null)
                 {
                     var accessToken = ExtractFromContext(context, reWriteConfig.Token.From, reWriteConfig.Token.Key);
