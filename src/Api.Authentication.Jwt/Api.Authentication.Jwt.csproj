@@ -7,7 +7,7 @@
     <Version>0.0.11</Version>
     <Title>Api.Security.Authentication.Jwt</Title>
     <Authors>Emmanuel Ajibodu</Authors>
-    <PackageId>Dotnet.Api.Security.Authentication.Jwt</PackageId>
+    <PackageId>Api.Security.Authentication.Jwt</PackageId>
     <PackageTags>Authentication;Security;Api;Jwt</PackageTags>
     <Description>Simple API Authentication with JWT</Description>
     <PackageProjectUrl>https://github.com/ajibodu/api-security</PackageProjectUrl>

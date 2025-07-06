@@ -7,7 +7,7 @@
     <Version>0.0.1</Version>
     <Title>Api.Security.Authentication.Scheme</Title>
     <Authors>Emmanuel Ajibodu</Authors>
-    <PackageId>Dotnet.Api.Security.Authentication.Scheme</PackageId>
+    <PackageId>Api.Security.Authentication.Scheme</PackageId>
     <PackageTags>Authentication;Security;Api;Scheme</PackageTags>
     <Description>Simple API Authentication with Scheme</Description>
     <PackageProjectUrl>https://github.com/ajibodu/api-security</PackageProjectUrl>

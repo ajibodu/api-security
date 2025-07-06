@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Api.Authentication.Jwt.Configurations;
 using Api.Authentication.Jwt.DependencyInjection;
@@ -16,7 +17,7 @@ using Moq;
 using Xunit;
 using AuthenticationBuilder = Api.Authentication.Core.AuthenticationBuilder;
 
-namespace Api.Authentication.Test.Jwt;
+namespace Api.Authentication.Jwt.Test;
 
 public class AuthenticationBuilderExtensionsTests
 {
@@ -32,6 +33,12 @@ public class AuthenticationBuilderExtensionsTests
                 {"JwtConfiguration:ExpirationInMinutes", (config?.ExpirationInMinutes ?? 60).ToString()}
             })
             .Build();
+        
+        var user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>()));
+        var context = new DefaultHttpContext { User = user };
+        var accessor = new Mock<IHttpContextAccessor>();
+        accessor.Setup(a => a.HttpContext).Returns(context);
+        services.AddSingleton(accessor.Object);
         return new AuthenticationBuilder(services, configuration);
     }
 
@@ -44,7 +51,7 @@ public class AuthenticationBuilderExtensionsTests
         var currentUser = provider.GetService<ICurrentUser>();
         Assert.NotNull(currentUser);
         var authService = provider.GetService<IAuthenticationService>();
-        Assert.Null(authService); // Should not register IAuthenticationService by default
+        Assert.NotNull(authService);
     }
 
     [Fact]
@@ -72,7 +79,7 @@ public class AuthenticationBuilderExtensionsTests
         builder.WithJwtBearer();
         var provider = builder.Services.BuildServiceProvider();
         var options = provider.GetService<IOptions<JwtBearerOptions>>();
-        Assert.Null(options); // Options are registered internally by AddJwtBearer
+        Assert.NotNull(options); // Options are registered internally by AddJwtBearer
     }
 
     [Fact]

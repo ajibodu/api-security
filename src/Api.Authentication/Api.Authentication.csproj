@@ -7,7 +7,7 @@
     <Version>0.0.2</Version>
     <Title>Api.Security.Authentication</Title>
     <Authors>Emmanuel Ajibodu</Authors>
-    <PackageId>Dotnet.Api.Security.Authentication</PackageId>
+    <PackageId>Api.Security.Authentication</PackageId>
     <PackageTags>Authentication;Security;Api</PackageTags>
     <Description>Simple API Authentication</Description>
     <PackageProjectUrl>https://github.com/ajibodu/api-security</PackageProjectUrl>

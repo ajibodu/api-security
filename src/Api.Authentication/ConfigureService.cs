@@ -15,6 +15,7 @@ public static class ConfigureService
     /// <param name="configuration"></param>
     public static AuthenticationBuilder AddApiAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddHttpContextAccessor();
         return new AuthenticationBuilder(services, configuration);
     }
 }

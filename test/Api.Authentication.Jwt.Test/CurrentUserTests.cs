@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace Api.Authentication.Test.Jwt;
+namespace Api.Authentication.Jwt.Test;
 
 public class CurrentUserTests
 {
@@ -23,9 +23,7 @@ public class CurrentUserTests
         Audience = "audience",
         ExpirationInMinutes = 60
     };
-
-    private static IOptions<JwtConfiguration> GetOptions() => Options.Create(GetJwtConfig());
-
+    
     private static JwtConfiguration GetJwtConfigWithSession() => new()
     {
         SecretKey = "supersecretkey1234567890supersecretkey!",
@@ -34,6 +32,8 @@ public class CurrentUserTests
         ExpirationInMinutes = 60,
         Session = new UserSessionConfiguration { ActivityWindowMinutes = 30 }
     };
+
+    private static IOptions<JwtConfiguration> GetOptions() => Options.Create(GetJwtConfig());
 
     private static IOptions<JwtConfiguration> GetOptionsWithSession() => Options.Create(GetJwtConfigWithSession());
 
@@ -51,10 +51,23 @@ public class CurrentUserTests
     {
         var claims = new List<CustomClaim>
         {
-            new CustomClaim("sub", "user1", CustomClaimValueTypes.String, true)
+            new("sub", "user1", CustomClaimValueTypes.String, true)
+        };
+        var currentUser = new CurrentUser(GetHttpContextAccessor(), GetOptions());
+        var response = await currentUser.GenerateJwt(claims);
+        Assert.False(string.IsNullOrWhiteSpace(response.Jwt));
+        Assert.Equal(60, response.ExpirationInMinutes);
+    }
+    
+    [Fact]
+    public async Task GenerateJwt_ValidClaims_WIthSession_ReturnsTokenResponse()
+    {
+        var claims = new List<CustomClaim>
+        {
+            new("sub", "user1", CustomClaimValueTypes.String, true)
         };
         var sessionManager = new Mock<ISessionManager>();
-        var currentUser = new CurrentUser(GetHttpContextAccessor(), GetOptions(), sessionManager.Object);
+        var currentUser = new CurrentUser(GetHttpContextAccessor(), GetOptionsWithSession(), sessionManager.Object);
         var response = await currentUser.GenerateJwt(claims);
         Assert.False(string.IsNullOrWhiteSpace(response.Jwt));
         Assert.Equal(60, response.ExpirationInMinutes);

@@ -4,7 +4,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0C88DD14-F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Authentication.Test.Jwt", "..\test\Api.Authentication.Test.Jwt\Api.Authentication.Test.Jwt.csproj", "{349745F1-F89E-4BAF-AF41-A68693F24DB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Authentication.Jwt.Test", "..\test\Api.Authentication.Jwt.Test\Api.Authentication.Jwt.Test.csproj", "{349745F1-F89E-4BAF-AF41-A68693F24DB8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Authentication", "Api.Authentication\Api.Authentication.csproj", "{34D82DAB-2844-4D8B-A1B6-115A9F34CF1A}"
 EndProject
@@ -15,6 +15,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Authentication.Scheme", "Api.Authentication.Scheme\Api.Authentication.Scheme.csproj", "{F2C3D715-69F2-437D-BB68-D3862DEDB86C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Authorization", "Api.Authorization\Api.Authorization.csproj", "{BED1A435-1785-46DD-9CFC-FE6F03A225EA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{32080DA9-A7C0-4012-A32B-4915183ED143}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApiWithJwt", "..\sample\SampleApiWithJwt\SampleApiWithJwt.csproj", "{76804964-7006-42D9-ABE5-488B5118CFA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -98,6 +102,18 @@ Global
 		{BED1A435-1785-46DD-9CFC-FE6F03A225EA}.Release|x64.Build.0 = Release|Any CPU
 		{BED1A435-1785-46DD-9CFC-FE6F03A225EA}.Release|x86.ActiveCfg = Release|Any CPU
 		{BED1A435-1785-46DD-9CFC-FE6F03A225EA}.Release|x86.Build.0 = Release|Any CPU
+		{76804964-7006-42D9-ABE5-488B5118CFA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76804964-7006-42D9-ABE5-488B5118CFA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76804964-7006-42D9-ABE5-488B5118CFA1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{76804964-7006-42D9-ABE5-488B5118CFA1}.Debug|x64.Build.0 = Debug|Any CPU
+		{76804964-7006-42D9-ABE5-488B5118CFA1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{76804964-7006-42D9-ABE5-488B5118CFA1}.Debug|x86.Build.0 = Debug|Any CPU
+		{76804964-7006-42D9-ABE5-488B5118CFA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76804964-7006-42D9-ABE5-488B5118CFA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76804964-7006-42D9-ABE5-488B5118CFA1}.Release|x64.ActiveCfg = Release|Any CPU
+		{76804964-7006-42D9-ABE5-488B5118CFA1}.Release|x64.Build.0 = Release|Any CPU
+		{76804964-7006-42D9-ABE5-488B5118CFA1}.Release|x86.ActiveCfg = Release|Any CPU
+		{76804964-7006-42D9-ABE5-488B5118CFA1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,5 +125,6 @@ Global
 		{83840FD7-EA1F-450B-87FD-A400F2DDFCFC} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{F2C3D715-69F2-437D-BB68-D3862DEDB86C} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{BED1A435-1785-46DD-9CFC-FE6F03A225EA} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{76804964-7006-42D9-ABE5-488B5118CFA1} = {32080DA9-A7C0-4012-A32B-4915183ED143}
 	EndGlobalSection
 EndGlobal
