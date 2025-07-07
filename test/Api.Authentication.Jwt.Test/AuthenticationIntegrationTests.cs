@@ -28,7 +28,7 @@ public class AuthenticationIntegrationTests
         var builder = new WebHostBuilder()
             .ConfigureAppConfiguration((_, config) =>
             {
-                config.AddInMemoryCollection(new Dictionary<string, string>
+                config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     {"JwtConfiguration:SecretKey", jwtConfig.SecretKey},
                     {"JwtConfiguration:Issuer", jwtConfig.Issuer},
@@ -230,7 +230,7 @@ public class AuthenticationIntegrationTests
         using var server = new TestServer(new WebHostBuilder()
             .ConfigureAppConfiguration((_, config) =>
             {
-                config.AddInMemoryCollection(new Dictionary<string, string>
+                config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     {"JwtConfiguration:SecretKey", jwtConfig.SecretKey},
                     {"JwtConfiguration:Issuer", jwtConfig.Issuer},
