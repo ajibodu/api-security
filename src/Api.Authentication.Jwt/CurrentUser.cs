@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Api.Authentication.Core;
+using Api.Authentication.Jwt.Configurations;
 using Api.Authentication.Jwt.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -9,54 +10,31 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Authentication.Jwt;
 
-public class CurrentUser : ICurrentUser
+public class CurrentUser : BaseCurrentUser, ICurrentUser
 {
     private readonly ISessionManager _sessionManager = null!;
-    private readonly Configuration _configuration = null!;
-    private readonly IEnumerable<Claim> _claims = null!;
+    private readonly JwtConfiguration _jwtConfiguration = null!;
 
-    public CurrentUser(IHttpContextAccessor context, IOptions<Configuration> configuration, ISessionManager? sessionManager = null)
+    public CurrentUser(IHttpContextAccessor context, IOptions<JwtConfiguration> configuration, ISessionManager? sessionManager = null) : base(context)
     {
         if (context?.HttpContext == null)
             return;
-        _claims = context.HttpContext.User.Claims;
-        _configuration = configuration.Value;
+        _jwtConfiguration = configuration.Value;
 
-        if (_configuration.Session != null)
+        // Only require sessionManager if Session is configured
+        if (_jwtConfiguration.Session != null)
             _sessionManager = sessionManager ?? throw new NullReferenceException($"Mission Implementation of {nameof(ISessionManager)}");
-    }
-    
-    public string? GetClaimValue(string claimType)
-    {
-        return _claims.FirstOrDefault(c => c.Type == claimType)?.Value;
-    }
-    
-    public string GetRequiredClaimValue(string claimType)
-    {
-        return _claims.First(c => c.Type == claimType).Value;
-    }
-
-    public T? GetClaimValue<T>(string claimType, Func<string, T> converter)
-    {
-        var value = _claims.FirstOrDefault(c => c.Type == claimType)?.Value;
-        return value != null ? converter(value) : default;
-    }
-    
-    public T GetRequiredClaimValue<T>(string claimType, Func<string, T> converter)
-    {
-        var value = _claims.First(c => c.Type == claimType).Value;
-        return converter(value);
     }
     
     public DateTimeOffset IssuedDateTime => GetRequiredClaimValue(JwtRegisteredClaimNames.Iat, value => DateTimeOffset.FromUnixTimeSeconds(long.Parse(value)));
 
     public DateTimeOffset ExpirationDateTime => GetRequiredClaimValue(JwtRegisteredClaimNames.Exp, value => DateTimeOffset.FromUnixTimeSeconds(long.Parse(value)));
 
-    public async Task<string> GenerateJwt(IList<CustomClaim> jwtClaims)
+    public async Task<TokenResponse> GenerateJwt(IList<CustomClaim> jwtClaims)
     {
         if (jwtClaims == null || !jwtClaims.Any())
             throw new ArgumentException("At least one claim is required", nameof(jwtClaims));
-        if (string.IsNullOrWhiteSpace(_configuration.SecretKey))
+        if (string.IsNullOrWhiteSpace(_jwtConfiguration.SecretKey))
             throw new InvalidOperationException("JWT SecretKey is not configured");
 
         var uniqueClaims = jwtClaims.Where(claim => claim.IsUniqueId).ToList();
@@ -64,7 +42,7 @@ public class CurrentUser : ICurrentUser
             throw new InvalidOperationException("Exactly one unique claim is required for session management");
         var uniqueClaim = uniqueClaims.Single();
         
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.SecretKey));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfiguration.SecretKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var versionClaim = jwtClaims.FirstOrDefault(c => c.Type == SystemClaim.JwtVersion);
@@ -83,22 +61,23 @@ public class CurrentUser : ICurrentUser
         securityClaims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
         securityClaims.Add(new Claim(JwtRegisteredClaimNames.Nbf, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), CustomClaimValueTypes.Integer64));
         securityClaims.Add(new Claim(JwtRegisteredClaimNames.Sub, uniqueClaim.Value));
+        securityClaims.Add(new Claim(SystemClaim.Identifier, uniqueClaim.Value));
 
 
         var token = new JwtSecurityToken(
-            _configuration.Issuer,
-            _configuration.Audience,
+            _jwtConfiguration.Issuer,
+            _jwtConfiguration.Audience,
             securityClaims,
-            expires: DateTime.UtcNow.AddMinutes(_configuration.ExpirationInMinutes),
+            expires: DateTime.UtcNow.AddMinutes(_jwtConfiguration.ExpirationInMinutes),
             signingCredentials: credentials
         );
 
         var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
 
-        if (_configuration.Session != null)
-            await _sessionManager.SetAsync(uniqueClaim.Value, jwtToken, _configuration.Session.ActivityWindowMinutes);
+        if (_jwtConfiguration.Session != null)
+            await _sessionManager.SetAsync(uniqueClaim.Value, jwtToken, _jwtConfiguration.Session.ActivityWindowMinutes);
         
-        return jwtToken;
+        return new TokenResponse(jwtToken, _jwtConfiguration.ExpirationInMinutes);
     }
     
     public bool VerifyJwtAsync(string jwtToken)
@@ -109,10 +88,10 @@ public class CurrentUser : ICurrentUser
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = _configuration.Issuer,
-            ValidAudience = _configuration.Audience,
+            ValidIssuer = _jwtConfiguration.Issuer,
+            ValidAudience = _jwtConfiguration.Audience,
             ValidateLifetime = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.SecretKey))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfiguration.SecretKey))
         };
 
         try
@@ -134,10 +113,10 @@ public class CurrentUser : ICurrentUser
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = _configuration.Issuer,
-            ValidAudience = _configuration.Audience,
+            ValidIssuer = _jwtConfiguration.Issuer,
+            ValidAudience = _jwtConfiguration.Audience,
             ValidateLifetime = false,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.SecretKey))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfiguration.SecretKey))
         };
 
         try
@@ -156,7 +135,7 @@ public class CurrentUser : ICurrentUser
         if(_sessionManager == null)
             throw new InvalidOperationException($"Mission Implementation of {nameof(ISessionManager)}");
         
-        await _sessionManager.RemoveAsync(GetRequiredClaimValue(JwtRegisteredClaimNames.Sub));
+        await _sessionManager.RemoveAsync(GetRequiredClaimValue(SystemClaim.Identifier));
     }
     
     private readonly HashSet<string> _defaultClaimTypesToExclude =

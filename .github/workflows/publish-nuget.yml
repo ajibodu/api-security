@@ -1,0 +1,72 @@
+name: Reusable NuGet Publish Workflow
+
+on:
+  workflow_call:
+    inputs:
+      project_working_dir:
+        required: true
+        type: string
+        description: 'Path to the project directory'
+      dotnet_version:
+        required: false
+        type: string
+        default: '8.0.x'
+        description: '.NET SDK version'
+    secrets:
+      NUGET_API_KEY:
+        required: true
+
+env:
+  NuGetDirectory: ${{ github.workspace}}/nuget
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ inputs.dotnet_version }}
+
+      - name: Restore dependencies
+        working-directory: ${{ inputs.project_working_dir }}
+        run: dotnet restore
+
+      - name: Build
+        working-directory: ${{ inputs.project_working_dir }}
+        run: dotnet build --no-restore
+
+      - name: Pack Nugget
+        working-directory: ${{ inputs.project_working_dir }}
+        run: dotnet pack -c Release -o ${{ env.NuGetDirectory }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget
+          if-no-files-found: error
+          retention-days: 1
+          path: ${{ env.NuGetDirectory }}/*.nupkg
+
+  publish:
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget
+          path: ${{ env.NuGetDirectory }}
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ inputs.dotnet_version }}
+
+      - name: Push to Nuget Packages
+        run: dotnet nuget push "${{ env.NuGetDirectory }}/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json

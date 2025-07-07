@@ -1,0 +1,20 @@
+name: Publish Authentication NuGet Package
+
+env:
+  PROJ_WORKING_DIR: "src/Api.Authentication"
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "src/Api.Authentication/**"
+  workflow_dispatch:
+
+jobs:
+  publish-nuget:
+    uses: ./.github/workflows/publish-nuget.yml
+    with:
+      project_working_dir: ${{ env.PROJ_WORKING_DIR }}
+      dotnet_version: '8.0.x'
+    secrets:
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}

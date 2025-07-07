@@ -2,6 +2,7 @@ name: PR Checker
 
 env:
   SRC_WORKING_DIR: "src"
+  TEST_WORKING_DIR: "test"
   
 on:
   pull_request:
@@ -19,8 +20,10 @@ jobs:
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 8.0.x
-          
+          dotnet-version: |
+            8.0.x
+            9.0.x
+      
       - name: Restore dependencies
         working-directory: ${{ env.SRC_WORKING_DIR }}
         run: dotnet restore
@@ -28,4 +31,8 @@ jobs:
       - name: Build
         working-directory: ${{ env.SRC_WORKING_DIR }}
         run: dotnet build --no-restore
-    
+        
+      - name: Test
+        working-directory: ${{ env.TEST_WORKING_DIR }}
+        run: dotnet test Api.Authentication.Jwt.Test/Api.Authentication.Jwt.Test.csproj
+        

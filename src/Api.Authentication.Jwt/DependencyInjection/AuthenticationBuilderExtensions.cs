@@ -1,20 +1,24 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Api.Authentication.Core;
-using Api.Authentication.Jwt.Models;
+using Api.Authentication.Core.DependencyInjection;
+using Api.Authentication.Jwt.Configurations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Api.Authentication.Jwt;
+namespace Api.Authentication.Jwt.DependencyInjection;
 
-public static class JwtAuthentication
+public static class AuthenticationBuilderExtensions
 {
-    public static void WithJwt(this AuthenticationBuilder builder, AuthReWriteConfig? reWriteConfig = null)
+    public static void WithJwtBearer(this AuthenticationBuilder builder, AuthReWriteConfig? reWriteConfig = null)
     {
-        var jwtConfiguration = builder.Configuration.GetSection("JwtConfiguration").Get<Configuration>();
-        builder.Services.Configure<Configuration>(builder.Configuration.GetSection("JwtConfiguration"));
+        var jwtConfiguration = builder.Configuration.GetSection(nameof(JwtConfiguration)).Get<JwtConfiguration>();
+        builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection(nameof(JwtConfiguration)));
+        
+        if (jwtConfiguration is null)
+            throw new ArgumentException(nameof(JwtConfiguration));
+        jwtConfiguration.EnsureIsValid();
         
         builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         
@@ -27,6 +31,8 @@ public static class JwtAuthentication
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(options =>
         {
+            // Disable automatic claim type conversion (so claim name remains as was initially set)
+            //options.MapInboundClaims = false;
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
@@ -47,14 +53,14 @@ public static class JwtAuthentication
         });
     }
     
-    private static Func<TokenValidatedContext, Task> HandleTokenValidated(Configuration configuration)
+    private static Func<TokenValidatedContext, Task> HandleTokenValidated(JwtConfiguration jwtConfiguration)
     {
         return async context =>
         {
-            if (configuration.Session != null)
+            if (jwtConfiguration.Session != null)
             {
                 var sessionManager = context.HttpContext.RequestServices.GetRequiredService<ISessionManager>();
-                var userId = context.Principal?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+                var userId = context.Principal?.FindFirst(SystemClaim.Identifier)?.Value;
                 var token = context.HttpContext.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last(); 
                 
                 if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
@@ -75,7 +81,7 @@ public static class JwtAuthentication
                     return;
                 }
 
-                await sessionManager.UpdateActivityAsync(userId, configuration.Session.ActivityWindowMinutes);
+                await sessionManager.UpdateActivityAsync(userId, jwtConfiguration.Session.ActivityWindowMinutes);
             }
         };
     }
@@ -84,10 +90,19 @@ public static class JwtAuthentication
     {
         return context =>
         {
-            // If the request is for hub...
+            // If the request is for signalR/websocket...
             var currentPath = context.HttpContext.Request.Path;
             if (reWriteConfig?.PathStrings != null && reWriteConfig.PathStrings.Any(path => currentPath.StartsWithSegments(path, StringComparison.OrdinalIgnoreCase)))
             {
+                var tokenProvided = reWriteConfig.Token != null;
+                var headersProvided = reWriteConfig.Headers is { Count: > 0 };
+            
+                if (!tokenProvided && !headersProvided)
+                {
+                    context.Fail("Either a token or at least one header must be provided in the rewrite configuration.");
+                    return Task.CompletedTask;
+                }
+            
                 if (reWriteConfig.Token != null)
                 {
                     var accessToken = ExtractFromContext(context, reWriteConfig.Token.From, reWriteConfig.Token.Key);
