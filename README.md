@@ -17,13 +17,13 @@ A robust, flexible authentication solution for .NET applications that simplifies
 
 ```shell
 # Core authentication package
-dotnet add package Api.Authentication
+dotnet add package Api.Security.Authentication
 
 # JWT authentication (if needed)
-dotnet add package Api.Authentication.Jwt
+dotnet add package Api.Security.Authentication.Jwt
 
 # Basic and Key-based authentication (if needed)
-dotnet add package Api.Authentication.Scheme
+dotnet add package Api.Security.Authentication.Scheme
 ```
 
 ## 🚀 Quick Start
