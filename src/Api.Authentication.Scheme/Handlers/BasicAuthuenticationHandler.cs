@@ -16,12 +16,12 @@ public class BasicAuthenticationHandler(
 {
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        if (!Request.Headers.TryGetValue("Authorization", out var headerValue))
+        if (!Request.Headers.TryGetValue("Authorization", out var headerValue) || string.IsNullOrEmpty(headerValue))
             return AuthenticateResult.Fail("Missing Authorization Header");
 
         try
         {
-            var authHeader = AuthenticationHeaderValue.Parse(headerValue);
+            var authHeader = AuthenticationHeaderValue.Parse(headerValue.ToString());
             if(authHeader.Parameter == null)
                 return await Task.FromResult(AuthenticateResult.Fail("Basic Authorization is required"));
             

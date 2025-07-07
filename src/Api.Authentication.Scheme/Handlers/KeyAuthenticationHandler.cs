@@ -16,10 +16,10 @@ public class KeyAuthenticationHandler(
 {
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        if (!Request.Headers.TryGetValue(Options.HeaderName, out var headerValue))
+        if (!Request.Headers.TryGetValue(Options.HeaderName, out var headerValue) || string.IsNullOrEmpty(headerValue))
             return AuthenticateResult.Fail("Missing API Key");
 
-        var authResult = await authenticationService.Authenticate(headerValue);
+        var authResult = await authenticationService.Authenticate(headerValue.ToString());
         if (!authResult.IsValid)
             return AuthenticateResult.Fail("Invalid API Key");
         
@@ -29,7 +29,7 @@ public class KeyAuthenticationHandler(
             claims =
             [
                 new Claim(ClaimTypes.Name, "AuthenticatedUser"),
-                new Claim(Options.HeaderName, headerValue)
+                new Claim(Options.HeaderName, headerValue.ToString())
             ];
         }else
         {

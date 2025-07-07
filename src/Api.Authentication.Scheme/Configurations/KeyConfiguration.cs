@@ -9,7 +9,7 @@ public interface IKeyConfiguration
 
 public class KeyConfiguration : AuthenticationSchemeOptions, IKeyConfiguration
 {
-    public string HeaderName { get; set; }
+    public string HeaderName { get; set; } = string.Empty;
 }
 
 public record SimpleKeyConfiguration(string HeaderName, string HeaderValue);
