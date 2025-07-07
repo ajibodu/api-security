@@ -14,6 +14,6 @@ jobs:
     uses: ./.github/workflows/publish-nuget.yml
     with:
       project_working_dir: "src/Api.Authentication.Scheme"
-      dotnet_version: '8.0.x'
+      dotnet_version: '9.0.x'
     secrets:
       NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
