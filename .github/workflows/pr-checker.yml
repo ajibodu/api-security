@@ -32,8 +32,5 @@ jobs:
         
       - name: Test
         working-directory: ${{ env.TEST_WORKING_DIR }}
-        run: |
-          dotnet restore
-          dotnet build --no-restore
-          dotnet test Api.Authentication.Jwt.Test/Api.Authentication.Jwt.Test.csproj --verbosity normal
+        run: dotnet test Api.Authentication.Jwt.Test/Api.Authentication.Jwt.Test.csproj
         
