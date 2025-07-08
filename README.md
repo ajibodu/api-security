@@ -35,8 +35,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add API Authentication with JWT Bearer scheme
 builder.Services
-    .AddApiAuthentication(builder.Configuration)
-    .WithJwtBearer();
+    .AddApiAuthentication()
+    .WithJwtBearer(builder.Configuration.GetRequiredConfig<JwtConfiguration>(nameof(JwtConfiguration)));
 
 // Register controllers and enable authorization
 builder.Services.AddControllers();
@@ -80,7 +80,7 @@ JSON Web Tokens provide a stateless, secure method for authentication that works
 
 ```json
 {
-  "Jwt": {
+  "JwtConfiguration": {
     "SecretKey": "your-secure-secret-key-at-least-256-bits-long",
     "Issuer": "your-application-name",
     "Audience": "your-application-clients",
@@ -96,14 +96,14 @@ JSON Web Tokens provide a stateless, secure method for authentication that works
 
 ```csharp
 builder.Services
-    .AddApiAuthentication(builder.Configuration)
-    .WithJwtBearer();
+    .AddApiAuthentication()
+    .WithJwtBearer(builder.Configuration.GetRequiredConfig<JwtConfiguration>(nameof(JwtConfiguration)));
 ```
 
 #### Programmatic Configuration
 
 ```csharp
-builder.Services.AddApiAuthentication(builder.Configuration)
+builder.Services.AddApiAuthentication()
     .WithJwtBearer(options => {
         options.SecretKey = "your-secure-secret-key-at-least-256-bits-long";
         options.Issuer = "your-application-name";
@@ -195,7 +195,7 @@ Basic Authentication provides a simple username/password authentication mechanis
 
 ```csharp
 builder.Services
-    .AddApiAuthentication(builder.Configuration)
+    .AddApiAuthentication()
     .WithBasicScheme(new BasicConfiguration("admin","secure-password"));
 ```
 
@@ -224,7 +224,7 @@ public class MyBasicAuthService : IBasicAuthenticationService
 
 // Register in your startup
 builder.Services
-    .AddApiAuthentication(builder.Configuration)
+    .AddApiAuthentication()
     .WithBasicScheme<MyBasicAuthService>();
 ```
 
@@ -232,7 +232,7 @@ builder.Services
 
 ```csharp
 builder.Services
-    .AddApiAuthentication(builder.Configuration)
+    .AddApiAuthentication()
     .WithBasicScheme(async (username, password) => {
         // Your authentication logic here
         bool isValid = username == "admin" && password == "password123";
@@ -248,7 +248,7 @@ API Key authentication provides a simple, token-based approach suitable for mach
 
 ```csharp
 builder.Services
-    .AddApiAuthentication(builder.Configuration)
+    .AddApiAuthentication()
     .WithKeyScheme(new SimpleKeyConfiguration("X-API-Key", "your-api-key-value"), "ApiKey");
 ```
 
@@ -274,7 +274,7 @@ public class MyApiKeyService : IKeyAuthenticationService
 
 // Register in your startup
 builder.Services
-    .AddApiAuthentication(builder.Configuration)
+    .AddApiAuthentication()
     .WithKeyScheme<MyApiKeyService>("X-API-Key", "ApiKey");
 ```
 
@@ -282,7 +282,7 @@ builder.Services
 
 ```csharp
 builder.Services
-    .AddApiAuthentication(builder.Configuration)
+    .AddApiAuthentication()
     .WithKeyScheme("X-API-Key", async (key) => {
         // Validate key against database or other source
         bool isValid = key == "valid-api-key-123";
@@ -322,8 +322,8 @@ You can combine multiple authentication schemes to support different client type
 
 ```csharp
 builder.Services
-    .AddApiAuthentication(builder.Configuration)
-    .WithJwtBearer("Bearer")
+    .AddApiAuthentication()
+    .WithJwtBearer(builder.Configuration.GetRequiredConfig<JwtConfiguration>(nameof(JwtConfiguration)));
     .WithBasicScheme("Basic")
     .WithKeyScheme("X-API-Key", "ApiKey");
 ```

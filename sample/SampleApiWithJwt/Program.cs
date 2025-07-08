@@ -1,5 +1,7 @@
 using Api.Authentication;
+using Api.Authentication.Core.Extensions;
 using Api.Authentication.Jwt;
+using Api.Authentication.Jwt.Configurations;
 using Api.Authentication.Jwt.DependencyInjection;
 using Api.Authentication.Jwt.Models;
 using Microsoft.OpenApi.Models;
@@ -43,8 +45,9 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services
-    .AddApiAuthentication(builder.Configuration)
-    .WithJwtBearer();
+    .AddApiAuthentication()
+    .WithJwtBearer(builder.Configuration.GetRequiredConfig<JwtConfiguration>(nameof(JwtConfiguration)));
+
 builder.Services.AddScoped<CurrentUserProperties>();
 
 builder.Services.AddAuthorization();

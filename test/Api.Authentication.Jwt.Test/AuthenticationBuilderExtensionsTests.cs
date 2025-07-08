@@ -18,20 +18,17 @@ namespace Api.Authentication.Jwt.Test;
 
 public class AuthenticationBuilderExtensionsTests
 {
+    private readonly JwtConfiguration _defaultConfig = new JwtConfiguration
+    {
+        SecretKey = "testkey1234567890",
+        Issuer = "issuer",
+        Audience = "audience",
+        ExpirationInMinutes = 60
+    };
+    
     private AuthenticationBuilder GetBuilder(JwtConfiguration? config)
     {
         var services = new ServiceCollection();
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                {"JwtConfiguration:SecretKey", config?.SecretKey},
-                {"JwtConfiguration:Issuer", config?.Issuer},
-                {"JwtConfiguration:Audience", config?.Audience},
-                {"JwtConfiguration:ExpirationInMinutes", (config?.ExpirationInMinutes).ToString()},
-                {"JwtConfiguration:Session:ActivityWindowMinutes", config?.Session?.ActivityWindowMinutes.ToString()}
-
-            })
-            .Build();
         
         var user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>()));
         var context = new DefaultHttpContext { User = user };
@@ -45,28 +42,19 @@ public class AuthenticationBuilderExtensionsTests
             services.AddSingleton(sessionManager.Object);
         }
 
-        return new AuthenticationBuilder(services, configuration);
+        return new AuthenticationBuilder(services);
     }
     
     private AuthenticationBuilder GetBuilder()
     {
         var services = new ServiceCollection();
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                {"JwtConfiguration:SecretKey", "testkey1234567890"},
-                {"JwtConfiguration:Issuer", "issuer"},
-                {"JwtConfiguration:Audience", "audience"},
-                {"JwtConfiguration:ExpirationInMinutes", 60.ToString()}
-            })
-            .Build();
         
         var user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>()));
         var context = new DefaultHttpContext { User = user };
         var accessor = new Mock<IHttpContextAccessor>();
         accessor.Setup(a => a.HttpContext).Returns(context);
         services.AddSingleton(accessor.Object);
-        return new AuthenticationBuilder(services, configuration);
+        return new AuthenticationBuilder(services);
     }
 
     [Fact]
@@ -76,7 +64,7 @@ public class AuthenticationBuilderExtensionsTests
         var builder = GetBuilder();
         
         // Act
-        builder.WithJwtBearer();
+        builder.WithJwtBearer(_defaultConfig);
         var provider = builder.Services.BuildServiceProvider();
         
         // Assert
@@ -99,7 +87,7 @@ public class AuthenticationBuilderExtensionsTests
         var builder = GetBuilder(config);
         
         // Act
-        builder.WithJwtBearer();
+        builder.WithJwtBearer(config);
         
         // Assert
         Assert.NotNull(builder.Services); // Could be improved with a real ISessionManager test/mock
@@ -112,7 +100,7 @@ public class AuthenticationBuilderExtensionsTests
         var builder = GetBuilder();
         
         // Act
-        builder.WithJwtBearer();
+        builder.WithJwtBearer(_defaultConfig);
         var provider = builder.Services.BuildServiceProvider();
         
         // Assert
@@ -132,7 +120,7 @@ public class AuthenticationBuilderExtensionsTests
         };
         
         // Act
-        builder.WithJwtBearer(rewriteConfig);
+        builder.WithJwtBearer(_defaultConfig, rewriteConfig);
         
         // Assert
         Assert.NotNull(builder.Services);
@@ -142,10 +130,10 @@ public class AuthenticationBuilderExtensionsTests
     public void ThrowsException_WhenJwtConfigurationIsNull()
     {
         // Arrange
-        var builder = GetBuilder(null);
+        var builder = GetBuilder();
         
         // Act & Assert
-        var ex = Record.Exception(() => builder.WithJwtBearer());
+        var ex = Record.Exception(() => builder.WithJwtBearer(jwtConfiguration: null));
         Assert.NotNull(ex);
         Assert.IsType<ArgumentException>(ex.InnerException ?? ex);
     }
@@ -158,7 +146,7 @@ public class AuthenticationBuilderExtensionsTests
         var builder = GetBuilder(config);
         
         // Act & Assert
-        var ex = Record.Exception(() => builder.WithJwtBearer());
+        var ex = Record.Exception(() => builder.WithJwtBearer(config));
         Assert.NotNull(ex);
         Assert.IsType<ArgumentNullException>(ex.InnerException ?? ex);
     }
@@ -169,8 +157,9 @@ public class AuthenticationBuilderExtensionsTests
         // Arrange
         var builder = GetBuilder();
         
+        
         // Act & Assert
-        var ex = Record.Exception(() => builder.WithJwtBearer(null));
+        var ex = Record.Exception(() => builder.WithJwtBearer(_defaultConfig, null));
         Assert.Null(ex);
     }
 
@@ -182,7 +171,7 @@ public class AuthenticationBuilderExtensionsTests
         var rewriteConfig = new AuthReWriteConfig {PathStrings = ["/hub"]};
         
         // Act & Assert
-        var ex = Record.Exception(() => builder.WithJwtBearer(rewriteConfig));
+        var ex = Record.Exception(() => builder.WithJwtBearer(_defaultConfig, rewriteConfig));
         Assert.Null(ex);
     }
 
@@ -208,10 +197,10 @@ public class AuthenticationBuilderExtensionsTests
                 {"JwtConfiguration:ExpirationInMinutes", config.ExpirationInMinutes.ToString()}
             })
             .Build();
-        var builder = new AuthenticationBuilder(services, configuration);
+        var builder = new AuthenticationBuilder(services);
         // Remove ISessionManager registration to simulate missing dependency
         // Act
-        var ex = Record.Exception(() => builder.WithJwtBearer());
+        var ex = Record.Exception(() => builder.WithJwtBearer(config));
         // Assert
         Assert.Null(ex); // Registration does not throw, but runtime will fail if ISessionManager is missing
     }

@@ -11,18 +11,43 @@ namespace Api.Authentication.Jwt.DependencyInjection;
 
 public static class AuthenticationBuilderExtensions
 {
-    public static void WithJwtBearer(this AuthenticationBuilder builder, AuthReWriteConfig? reWriteConfig = null)
+    public static void WithJwtBearer(this AuthenticationBuilder builder, Action<JwtConfiguration> configureOptions, AuthReWriteConfig? reWriteConfig = null)
     {
-        var jwtConfiguration = builder.Configuration.GetSection(nameof(JwtConfiguration)).Get<JwtConfiguration>();
-        builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection(nameof(JwtConfiguration)));
-        
+        var jwtConfiguration = new JwtConfiguration
+        {
+            SecretKey = string.Empty,
+            Issuer = string.Empty,
+            Audience = string.Empty
+        };
+
+        configureOptions(jwtConfiguration);
+    
+        ValidateAndConfigureJwt(builder, jwtConfiguration, reWriteConfig);
+    }
+
+    public static void WithJwtBearer(this AuthenticationBuilder builder, JwtConfiguration jwtConfiguration, AuthReWriteConfig? reWriteConfig = null)
+    {
+        builder.Services.Configure<JwtConfiguration>(options => 
+        {
+            options.SecretKey = jwtConfiguration.SecretKey;
+            options.Issuer = jwtConfiguration.Issuer;
+            options.Audience = jwtConfiguration.Audience;
+            options.ExpirationInMinutes = jwtConfiguration.ExpirationInMinutes;
+            options.Session = jwtConfiguration.Session;
+        });
+
+        ValidateAndConfigureJwt(builder, jwtConfiguration, reWriteConfig);
+    }
+
+    private static void ValidateAndConfigureJwt(AuthenticationBuilder builder, JwtConfiguration jwtConfiguration, AuthReWriteConfig? reWriteConfig)
+    {
         if (jwtConfiguration is null)
             throw new ArgumentException(nameof(JwtConfiguration));
         jwtConfiguration.EnsureIsValid();
         
         builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         
-        if(jwtConfiguration?.Session != null)
+        if(jwtConfiguration.Session != null)
             builder.Services.FindAndRegisterServices<ISessionManager>();
         
         builder.Services.AddAuthentication(options =>
@@ -52,7 +77,7 @@ public static class AuthenticationBuilderExtensions
             };
         });
     }
-    
+
     private static Func<TokenValidatedContext, Task> HandleTokenValidated(JwtConfiguration jwtConfiguration)
     {
         return async context =>

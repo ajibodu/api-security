@@ -6,12 +6,8 @@ namespace Api.Authentication.Core;
 /// <summary>
 /// Provides a builder for configuring authentication services and options.
 /// </summary>
-public class AuthenticationBuilder(IServiceCollection services, IConfiguration configuration)
+public class AuthenticationBuilder(IServiceCollection services)
 {
-    /// <summary>
-    /// Gets the configuration instance used for authentication.
-    /// </summary>
-    public IConfiguration Configuration { get; } = configuration;
     /// <summary>
     /// Gets the service collection for registering authentication services.
     /// </summary>
