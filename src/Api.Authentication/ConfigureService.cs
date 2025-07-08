@@ -12,11 +12,10 @@ public static class ConfigureService
     /// Requires AddHttpContextAccessor 
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="configuration"></param>
-    public static AuthenticationBuilder AddApiAuthentication(this IServiceCollection services, IConfiguration configuration)
+    public static AuthenticationBuilder AddApiAuthentication(this IServiceCollection services)
     {
         services.AddHttpContextAccessor();
-        return new AuthenticationBuilder(services, configuration);
+        return new AuthenticationBuilder(services);
     }
 }
 

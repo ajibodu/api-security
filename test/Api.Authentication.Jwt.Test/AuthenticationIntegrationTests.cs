@@ -26,29 +26,10 @@ public class AuthenticationIntegrationTests
     private static TestServer CreateServer(JwtConfiguration jwtConfig, Action<IServiceCollection>? configureServices = null)
     {
         var builder = new WebHostBuilder()
-            .ConfigureAppConfiguration((_, config) =>
-            {
-                config.AddInMemoryCollection(new Dictionary<string, string?>
-                {
-                    {"JwtConfiguration:SecretKey", jwtConfig.SecretKey},
-                    {"JwtConfiguration:Issuer", jwtConfig.Issuer},
-                    {"JwtConfiguration:Audience", jwtConfig.Audience},
-                    {"JwtConfiguration:ExpirationInMinutes", jwtConfig.ExpirationInMinutes.ToString()}
-                });
-            })
             .ConfigureServices(services =>
             {
-                var configuration = new ConfigurationBuilder()
-                    .AddInMemoryCollection(new Dictionary<string, string?>
-                    {
-                        {"JwtConfiguration:SecretKey", jwtConfig.SecretKey},
-                        {"JwtConfiguration:Issuer", jwtConfig.Issuer},
-                        {"JwtConfiguration:Audience", jwtConfig.Audience},
-                        {"JwtConfiguration:ExpirationInMinutes", jwtConfig.ExpirationInMinutes.ToString()}
-                    })
-                    .Build();
-                var builder = new Api.Authentication.Core.AuthenticationBuilder(services, configuration);
-                builder.WithJwtBearer();
+                var builder = new AuthenticationBuilder(services);
+                builder.WithJwtBearer(jwtConfig);
                 configureServices?.Invoke(services);
                 services.AddControllers();
             })
@@ -228,29 +209,10 @@ public class AuthenticationIntegrationTests
             Headers = new Dictionary<string, Mapping>()
         };
         using var server = new TestServer(new WebHostBuilder()
-            .ConfigureAppConfiguration((_, config) =>
-            {
-                config.AddInMemoryCollection(new Dictionary<string, string?>
-                {
-                    {"JwtConfiguration:SecretKey", jwtConfig.SecretKey},
-                    {"JwtConfiguration:Issuer", jwtConfig.Issuer},
-                    {"JwtConfiguration:Audience", jwtConfig.Audience},
-                    {"JwtConfiguration:ExpirationInMinutes", jwtConfig.ExpirationInMinutes.ToString()}
-                });
-            })
             .ConfigureServices(services =>
             {
-                var configuration = new ConfigurationBuilder()
-                    .AddInMemoryCollection(new Dictionary<string, string?>
-                    {
-                        {"JwtConfiguration:SecretKey", jwtConfig.SecretKey},
-                        {"JwtConfiguration:Issuer", jwtConfig.Issuer},
-                        {"JwtConfiguration:Audience", jwtConfig.Audience},
-                        {"JwtConfiguration:ExpirationInMinutes", jwtConfig.ExpirationInMinutes.ToString()}
-                    })
-                    .Build();
-                var builder = new Api.Authentication.Core.AuthenticationBuilder(services, configuration);
-                builder.WithJwtBearer(rewriteConfig);
+                var builder = new AuthenticationBuilder(services);
+                builder.WithJwtBearer(jwtConfig, rewriteConfig);
                 services.AddControllers();
             })
             .Configure(app =>
