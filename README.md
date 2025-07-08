@@ -97,7 +97,7 @@ JSON Web Tokens provide a stateless, secure method for authentication that works
 ```csharp
 builder.Services
     .AddApiAuthentication()
-    .WithJwtBearer(builder.Configuration.GetRequiredConfig<JwtConfiguration>(nameof(JwtConfiguration)));
+    .WithJwtBearer(builder.Configuration.GetRequiredSection<JwtConfiguration>(nameof(JwtConfiguration)));
 ```
 
 #### Programmatic Configuration
@@ -323,7 +323,7 @@ You can combine multiple authentication schemes to support different client type
 ```csharp
 builder.Services
     .AddApiAuthentication()
-    .WithJwtBearer(builder.Configuration.GetRequiredConfig<JwtConfiguration>(nameof(JwtConfiguration)));
+    .WithJwtBearer(builder.Configuration.GetRequiredSection<JwtConfiguration>(nameof(JwtConfiguration)));
     .WithBasicScheme("Basic")
     .WithKeyScheme("X-API-Key", "ApiKey");
 ```
