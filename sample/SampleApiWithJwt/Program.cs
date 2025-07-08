@@ -84,12 +84,12 @@ app.MapGet("/token", async (ICurrentUser currentUser) =>
 })
 .WithName("GetBearerToken");
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/weatherforecast", (CurrentUserProperties currentUser) =>
 {
     var forecast =  Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+            DateOnly.FromDateTime(currentUser.IssuedDateTime.DateTime),
             Random.Shared.Next(-20, 55),
             summaries[Random.Shared.Next(summaries.Length)]
         ))

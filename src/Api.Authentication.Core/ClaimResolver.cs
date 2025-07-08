@@ -6,16 +6,16 @@ namespace Api.Authentication.Core;
 /// <summary>
 /// Provides base functionality for accessing claims of the current user.
 /// </summary>
-public abstract class BaseCurrentUser
+public class ClaimResolver : IClaimResolver
 {
     // Consider initializing _claims to an empty list to avoid null reference issues.
     private readonly IEnumerable<Claim> _claims = null!;
 
     /// <summary>
-    /// Initializes a new instance of <see cref="BaseCurrentUser"/> using the provided HTTP context accessor.
+    /// Initializes a new instance of <see cref="ClaimResolver"/> using the provided HTTP context accessor.
     /// </summary>
     /// <param name="context">The HTTP context accessor.</param>
-    protected BaseCurrentUser(IHttpContextAccessor context)
+    public ClaimResolver(IHttpContextAccessor context)
     {
         if (context?.HttpContext == null)
             return;

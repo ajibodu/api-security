@@ -3,7 +3,7 @@ using Api.Authentication.Jwt.Models;
 
 namespace Api.Authentication.Jwt;
 
-public interface ICurrentUser
+public interface ICurrentUser : IClaimResolver
 {
     public DateTimeOffset IssuedDateTime { get; }
     public DateTimeOffset ExpirationDateTime { get; }
