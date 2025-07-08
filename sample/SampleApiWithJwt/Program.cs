@@ -46,7 +46,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services
     .AddApiAuthentication()
-    .WithJwtBearer(builder.Configuration.GetRequiredConfig<JwtConfiguration>(nameof(JwtConfiguration)));
+    .WithJwtBearer(builder.Configuration.GetRequiredSection<JwtConfiguration>(nameof(JwtConfiguration)));
 
 builder.Services.AddScoped<CurrentUserProperties>();
 

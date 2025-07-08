@@ -4,7 +4,7 @@ namespace Api.Authentication.Core.Extensions;
 
 public static class ConfigurationExtensions
 {
-    public static T GetRequiredConfig<T>(this IConfiguration configuration, string sectionName)
+    public static T GetRequiredSection<T>(this IConfiguration configuration, string sectionName)
         where T : class
     {
         var section = configuration.GetRequiredSection(sectionName);
