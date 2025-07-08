@@ -45,6 +45,7 @@ public static class AuthenticationBuilderExtensions
             throw new ArgumentException(nameof(JwtConfiguration));
         jwtConfiguration.EnsureIsValid();
         
+        builder.Services.AddScoped<IClaimResolver, ClaimResolver>();
         builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         
         if(jwtConfiguration.Session != null)

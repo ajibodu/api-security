@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Api.Authentication.Scheme;
 
-public class CurrentUser(IHttpContextAccessor context) : BaseCurrentUser(context), ICurrentUser
+public class CurrentUser(IHttpContextAccessor context) : ClaimResolver(context), ICurrentUser
 {
     
 }

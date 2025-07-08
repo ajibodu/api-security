@@ -10,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Authentication.Jwt;
 
-public class CurrentUser : BaseCurrentUser, ICurrentUser
+public class CurrentUser : ClaimResolver, ICurrentUser
 {
     private readonly ISessionManager _sessionManager = null!;
     private readonly JwtConfiguration _jwtConfiguration = null!;
