@@ -5,8 +5,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Api.Authentication.Jwt.Configurations;
-using Api.Authentication.Jwt.DependencyInjection;
+using Api.Security.Authentication.Jwt.Configurations;
+using Api.Security.Authentication.Jwt.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,7 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Xunit;
-using Api.Authentication.Core; // For ISessionManager, SystemClaim
+using Api.Security.Authentication.Core; // For ISessionManager, SystemClaim
 using Moq; // For mocking
 
 namespace Api.Authentication.Jwt.Test;
@@ -59,7 +59,7 @@ public class AuthenticationIntegrationTests
         var token = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(
             issuer: config.Issuer,
             audience: config.Audience,
-            claims: new[] { new System.Security.Claims.Claim(Api.Authentication.Core.SystemClaim.Identifier, userId) },
+            claims: new[] { new System.Security.Claims.Claim(SystemClaim.Identifier, userId) },
             expires: DateTime.UtcNow.AddMinutes(config.ExpirationInMinutes),
             signingCredentials: creds
         );

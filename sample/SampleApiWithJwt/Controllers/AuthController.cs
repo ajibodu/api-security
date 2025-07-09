@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Api.Authentication.Jwt;
-using Api.Authentication.Jwt.Models;
+using Api.Security.Authentication.Jwt;
+using Api.Security.Authentication.Jwt.Models;
 
 namespace SampleApiWithJwt.Controllers;
 

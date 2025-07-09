@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Api.Authentication.Jwt\Api.Authentication.Jwt.csproj" />
-    <ProjectReference Include="..\..\src\Api.Authentication\Api.Authentication.csproj" />
+    <ProjectReference Include="..\..\src\Api.Security.Authentication.Jwt\Api.Security.Authentication.Jwt.csproj" />
+    <ProjectReference Include="..\..\src\Api.Security.Authentication\Api.Security.Authentication.csproj" />
   </ItemGroup>
 
 </Project>

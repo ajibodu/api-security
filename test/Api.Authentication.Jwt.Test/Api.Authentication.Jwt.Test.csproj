@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Api.Authentication.Jwt\Api.Authentication.Jwt.csproj" />
+    <ProjectReference Include="..\..\src\Api.Security.Authentication.Jwt\Api.Security.Authentication.Jwt.csproj" />
   </ItemGroup>
 
 
