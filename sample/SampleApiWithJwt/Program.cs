@@ -1,9 +1,9 @@
-using Api.Authentication;
-using Api.Authentication.Core.Extensions;
-using Api.Authentication.Jwt;
-using Api.Authentication.Jwt.Configurations;
-using Api.Authentication.Jwt.DependencyInjection;
-using Api.Authentication.Jwt.Models;
+using Api.Security.Authentication;
+using Api.Security.Authentication.Core.Extensions;
+using Api.Security.Authentication.Jwt;
+using Api.Security.Authentication.Jwt.Configurations;
+using Api.Security.Authentication.Jwt.DependencyInjection;
+using Api.Security.Authentication.Jwt.Models;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using SampleApiWithJwt;

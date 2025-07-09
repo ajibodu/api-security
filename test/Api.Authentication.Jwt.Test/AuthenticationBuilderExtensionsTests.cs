@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using Api.Authentication.Core;
-using Api.Authentication.Jwt.Configurations;
-using Api.Authentication.Jwt.DependencyInjection;
+using Api.Security.Authentication.Core;
+using Api.Security.Authentication.Core;
+using Api.Security.Authentication.Jwt;
+using Api.Security.Authentication.Jwt.Configurations;
+using Api.Security.Authentication.Jwt.DependencyInjection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
-using AuthenticationBuilder = Api.Authentication.Core.AuthenticationBuilder;
+using AuthenticationBuilder = Api.Security.Authentication.Core.AuthenticationBuilder;
 
 namespace Api.Authentication.Jwt.Test;
 

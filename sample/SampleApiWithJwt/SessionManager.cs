@@ -1,4 +1,4 @@
-using Api.Authentication.Core;
+using Api.Security.Authentication.Core;
 
 namespace SampleApiWithJwt;
 

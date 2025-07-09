@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>0.0.4</Version>
+    <Title>Api.Security.Authentication.Core</Title>
+    <Authors>Emmanuel Ajibodu</Authors>
+    <PackageId>Api.Security.Authentication.Core</PackageId>
+    <PackageTags>Authentication;Security;Api</PackageTags>
+    <Description>Simple API Authentication Core</Description>
+    <PackageProjectUrl>https://github.com/ajibodu/api-security</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ajibodu/api-security</RepositoryUrl>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>

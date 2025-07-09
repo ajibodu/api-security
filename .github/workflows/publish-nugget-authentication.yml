@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - "src/Api.Authentication/**"
+      - "src/Api.Security.Authentication/**"
   workflow_dispatch:
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
       packages: write
     uses: ./.github/workflows/publish-nuget.yml
     with:
-      project_working_dir: "src/Api.Authentication"
+      project_working_dir: "src/Api.Security.Authentication"
       dotnet_version: '9.0.x'
     secrets:
       NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
