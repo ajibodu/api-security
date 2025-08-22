@@ -16,7 +16,7 @@ using Moq;
 using Xunit;
 using AuthenticationBuilder = Api.Security.Authentication.Core.AuthenticationBuilder;
 
-namespace Api.Authentication.Jwt.Test;
+namespace Api.Security.Authentication.Jwt.Test;
 
 public class AuthenticationBuilderExtensionsTests
 {

@@ -1,4 +1,4 @@
-﻿namespace Api.Authentication.Core.Tests;
+﻿namespace Api.Security.Authentication.Core.Test;
 
 public class UnitTest1
 {

@@ -15,5 +15,5 @@ public class SystemClaim
     /// <summary>
     /// The claim type for unique identifier.
     /// </summary>
-    public const string Identifier = "identifyer"; 
+    public const string Identifier = "identifier"; 
 }

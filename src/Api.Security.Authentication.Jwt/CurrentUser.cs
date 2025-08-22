@@ -47,7 +47,11 @@ public class CurrentUser : ClaimResolver, ICurrentUser
 
         var versionClaim = jwtClaims.FirstOrDefault(c => c.Type == SystemClaim.JwtVersion);
         if (versionClaim != null)
+        {
+            //when it is a token refresh
             versionClaim.Value = (int.Parse(versionClaim.Value) + 1).ToString();
+            jwtClaims = jwtClaims.Where(c => c.Type != SystemClaim.Identifier).ToList();
+        }
         else
             jwtClaims.Add(new CustomClaim(SystemClaim.JwtVersion, "1", CustomClaimValueTypes.Integer));
         
