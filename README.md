@@ -318,7 +318,7 @@ var tokenResponse = await currentUser.GenerateJwt(claims);
 
 ## 🔄 Multiple Authentication Schemes
 
-You can combine multiple authentication schemes to support different client types:
+You can combine multiple authentication schemes to support different client types. The library now supports **fluent chaining** for easy configuration:
 
 ```csharp
 builder.Services
@@ -335,6 +335,33 @@ builder.Services
         return new AuthResponse(isValid);
     }, "ApiKey");
 ```
+
+### Flexible Combinations
+
+You can use any combination of authentication schemes in any order:
+
+```csharp
+// JWT + Basic only
+builder.Services
+    .AddApiAuthentication()
+    .WithJwtBearer(jwtConfig)
+    .WithBasicScheme(authFunc);
+
+// Basic + API Key only  
+builder.Services
+    .AddApiAuthentication()
+    .WithBasicScheme(authFunc)
+    .WithKeyScheme("X-API-Key", keyFunc, "ApiKey");
+
+// All three schemes
+builder.Services
+    .AddApiAuthentication()
+    .WithJwtBearer(jwtConfig)
+    .WithBasicScheme(authFunc)
+    .WithKeyScheme("X-API-Key", keyFunc, "ApiKey");
+```
+
+### Using Multiple Schemes in Controllers
 
 Then in your controllers or actions, specify which schemes to accept:
 
@@ -377,6 +404,16 @@ app.MapGet("/basic-only", () => "Basic access granted")
 app.MapGet("/multi-auth", () => "Multi-auth access granted")
    .RequireAuthorization(); // Accepts any configured scheme
 ```
+
+### Complete Working Example
+
+See the [SampleApiWithMultipleAuth](sample/SampleApiWithMultipleAuth/) project for a complete working example that demonstrates:
+- JWT Bearer authentication
+- Basic authentication  
+- API Key authentication
+- Endpoints that accept specific schemes
+- Endpoints that accept multiple schemes
+- Swagger UI configuration for all schemes
 
 ## 🔒 Security Best Practices
 
