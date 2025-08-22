@@ -32,7 +32,11 @@ jobs:
         working-directory: ${{ env.SRC_WORKING_DIR }}
         run: dotnet build --no-restore
         
-      - name: Test
+      - name: Test Jwt Authentication
         working-directory: ${{ env.TEST_WORKING_DIR }}
-        run: dotnet test Api.Authentication.Jwt.Test/Api.Authentication.Jwt.Test.csproj
+        run: dotnet test Api.Security.Authentication.Jwt.Test/Api.Security.Authentication.Jwt.Test.csproj
+        
+      - name: Test Scheme Authentication
+        working-directory: ${{ env.TEST_WORKING_DIR }}
+        run: dotnet test Api.Security.Authentication.Scheme.Test/Api.Security.Authentication.Scheme.Test.csproj
         
