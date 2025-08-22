@@ -4,7 +4,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0C88DD14-F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Authentication.Jwt.Test", "..\test\Api.Authentication.Jwt.Test\Api.Authentication.Jwt.Test.csproj", "{349745F1-F89E-4BAF-AF41-A68693F24DB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Security.Authentication.Jwt.Test", "..\test\Api.Security.Authentication.Jwt.Test\Api.Security.Authentication.Jwt.Test.csproj", "{349745F1-F89E-4BAF-AF41-A68693F24DB8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Security.Authentication", "Api.Security.Authentication\Api.Security.Authentication.csproj", "{34D82DAB-2844-4D8B-A1B6-115A9F34CF1A}"
 EndProject
@@ -19,6 +19,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{32080DA9-A7C0-4012-A32B-4915183ED143}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApiWithJwt", "..\sample\SampleApiWithJwt\SampleApiWithJwt.csproj", "{76804964-7006-42D9-ABE5-488B5118CFA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Security.Authentication.Core.Test", "..\test\Api.Security.Authentication.Core.Test\Api.Security.Authentication.Core.Test.csproj", "{4E7CD594-5A44-4A14-8685-CA4B2B31B9A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Security.Authentication.Scheme.Test", "..\test\Api.Security.Authentication.Scheme.Test\Api.Security.Authentication.Scheme.Test.csproj", "{C1058D25-63A5-4B91-8870-8437D310537B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -114,6 +118,30 @@ Global
 		{76804964-7006-42D9-ABE5-488B5118CFA1}.Release|x64.Build.0 = Release|Any CPU
 		{76804964-7006-42D9-ABE5-488B5118CFA1}.Release|x86.ActiveCfg = Release|Any CPU
 		{76804964-7006-42D9-ABE5-488B5118CFA1}.Release|x86.Build.0 = Release|Any CPU
+		{4E7CD594-5A44-4A14-8685-CA4B2B31B9A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E7CD594-5A44-4A14-8685-CA4B2B31B9A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E7CD594-5A44-4A14-8685-CA4B2B31B9A6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4E7CD594-5A44-4A14-8685-CA4B2B31B9A6}.Debug|x64.Build.0 = Debug|Any CPU
+		{4E7CD594-5A44-4A14-8685-CA4B2B31B9A6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4E7CD594-5A44-4A14-8685-CA4B2B31B9A6}.Debug|x86.Build.0 = Debug|Any CPU
+		{4E7CD594-5A44-4A14-8685-CA4B2B31B9A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E7CD594-5A44-4A14-8685-CA4B2B31B9A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E7CD594-5A44-4A14-8685-CA4B2B31B9A6}.Release|x64.ActiveCfg = Release|Any CPU
+		{4E7CD594-5A44-4A14-8685-CA4B2B31B9A6}.Release|x64.Build.0 = Release|Any CPU
+		{4E7CD594-5A44-4A14-8685-CA4B2B31B9A6}.Release|x86.ActiveCfg = Release|Any CPU
+		{4E7CD594-5A44-4A14-8685-CA4B2B31B9A6}.Release|x86.Build.0 = Release|Any CPU
+		{C1058D25-63A5-4B91-8870-8437D310537B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1058D25-63A5-4B91-8870-8437D310537B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1058D25-63A5-4B91-8870-8437D310537B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C1058D25-63A5-4B91-8870-8437D310537B}.Debug|x64.Build.0 = Debug|Any CPU
+		{C1058D25-63A5-4B91-8870-8437D310537B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C1058D25-63A5-4B91-8870-8437D310537B}.Debug|x86.Build.0 = Debug|Any CPU
+		{C1058D25-63A5-4B91-8870-8437D310537B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1058D25-63A5-4B91-8870-8437D310537B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1058D25-63A5-4B91-8870-8437D310537B}.Release|x64.ActiveCfg = Release|Any CPU
+		{C1058D25-63A5-4B91-8870-8437D310537B}.Release|x64.Build.0 = Release|Any CPU
+		{C1058D25-63A5-4B91-8870-8437D310537B}.Release|x86.ActiveCfg = Release|Any CPU
+		{C1058D25-63A5-4B91-8870-8437D310537B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -126,5 +154,7 @@ Global
 		{F2C3D715-69F2-437D-BB68-D3862DEDB86C} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{BED1A435-1785-46DD-9CFC-FE6F03A225EA} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{76804964-7006-42D9-ABE5-488B5118CFA1} = {32080DA9-A7C0-4012-A32B-4915183ED143}
+		{4E7CD594-5A44-4A14-8685-CA4B2B31B9A6} = {0C88DD14-F956-CE84-757C-A364CCF449FC}
+		{C1058D25-63A5-4B91-8870-8437D310537B} = {0C88DD14-F956-CE84-757C-A364CCF449FC}
 	EndGlobalSection
 EndGlobal

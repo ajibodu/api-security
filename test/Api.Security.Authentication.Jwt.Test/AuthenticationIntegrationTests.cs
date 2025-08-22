@@ -19,7 +19,7 @@ using Xunit;
 using Api.Security.Authentication.Core; // For ISessionManager, SystemClaim
 using Moq; // For mocking
 
-namespace Api.Authentication.Jwt.Test;
+namespace Api.Security.Authentication.Jwt.Test;
 
 public class AuthenticationIntegrationTests
 {

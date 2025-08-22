@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace Api.Authentication.Jwt.Test;
+namespace Api.Security.Authentication.Jwt.Test;
 
 public class CurrentUserTests
 {
@@ -131,7 +131,7 @@ public class CurrentUserTests
     [Fact]
     public async Task RevokeJwtAsync_CallsSessionManagerRemoveAsync()
     {
-        var claims = new List<Claim> { new Claim("identifyer", "user1") };
+        var claims = new List<Claim> { new Claim(SystemClaim.Identifier, "user1") };
         var sessionManager = new Mock<ISessionManager>();
         sessionManager.Setup(m => m.RemoveAsync("user1")).Returns(Task.CompletedTask).Verifiable();
         var currentUser = new CurrentUser(GetHttpContextAccessor(claims), GetOptionsWithSession(), sessionManager.Object);
