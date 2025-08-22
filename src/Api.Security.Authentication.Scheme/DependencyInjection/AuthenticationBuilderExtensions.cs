@@ -10,6 +10,12 @@ namespace Api.Security.Authentication.Scheme.DependencyInjection;
 
 public static class AuthenticationBuilderExtensions
 {
+    private static void RegisterCurrentUserIfNotExists(AuthenticationBuilder builder)
+    {
+        // Only register if not already registered by another authentication scheme
+        if (!builder.Services.Any(s => s.ServiceType == typeof(ICurrentUser) && s.ImplementationType?.Namespace == typeof(CurrentUser).Namespace))
+            builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+    }
     public static AuthenticationBuilder WithBasicScheme(this AuthenticationBuilder builder, BasicConfiguration configuration, string schemeName = "Basic")
     {
         return builder.WithBasicScheme((userName, password) => Task.FromResult(new AuthResponse(userName == configuration.UserName && password == configuration.Password)), schemeName);
@@ -19,9 +25,7 @@ public static class AuthenticationBuilderExtensions
     {
         builder.Services.AddScoped<IBasicAuthenticationService, TBasicAuthService>();
         
-        // Only register if not already registered by another authentication scheme
-        if (!builder.Services.Any(s => s.ServiceType == typeof(ICurrentUser) && s.ImplementationType?.Namespace == "Api.Security.Authentication.Scheme"))
-            builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+        RegisterCurrentUserIfNotExists(builder);
         
         builder.Services.AddAuthentication()
             .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(schemeName, null);
@@ -32,9 +36,7 @@ public static class AuthenticationBuilderExtensions
     {
         builder.Services.AddSingleton<IBasicAuthenticationService>(new DelegateBasicAuthenticationService(authenticateFunc));
         
-        // Only register if not already registered by another authentication scheme
-        if (!builder.Services.Any(s => s.ServiceType == typeof(ICurrentUser) && s.ImplementationType?.Namespace == "Api.Security.Authentication.Scheme"))
-            builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+        RegisterCurrentUserIfNotExists(builder);
         
         builder.Services.AddAuthentication()
             .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(schemeName, null);
@@ -50,9 +52,7 @@ public static class AuthenticationBuilderExtensions
     {
         builder.Services.AddScoped<IKeyAuthenticationService, TKeyAuthService>();
         
-        // Only register if not already registered by another authentication scheme
-        if (!builder.Services.Any(s => s.ServiceType == typeof(ICurrentUser) && s.ImplementationType?.Namespace == "Api.Security.Authentication.Scheme"))
-            builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+        RegisterCurrentUserIfNotExists(builder);
         
         builder.Services.AddAuthentication()
             .AddScheme<KeyConfiguration, KeyAuthenticationHandler>(schemeName, null, options => options.HeaderName = headerName);
@@ -63,9 +63,7 @@ public static class AuthenticationBuilderExtensions
     {
         builder.Services.AddSingleton<IKeyAuthenticationService>(new DelegateKeyAuthenticationService(authenticateFunc));
         
-        // Only register if not already registered by another authentication scheme
-        if (!builder.Services.Any(s => s.ServiceType == typeof(ICurrentUser) && s.ImplementationType?.Namespace == "Api.Security.Authentication.Scheme"))
-            builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+        RegisterCurrentUserIfNotExists(builder);
         
         builder.Services.AddAuthentication()
             .AddScheme<KeyConfiguration, KeyAuthenticationHandler>(schemeName, null, options => options.HeaderName = headerName);
