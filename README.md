@@ -323,9 +323,17 @@ You can combine multiple authentication schemes to support different client type
 ```csharp
 builder.Services
     .AddApiAuthentication()
-    .WithJwtBearer(builder.Configuration.GetRequiredSection<JwtConfiguration>(nameof(JwtConfiguration)));
-    .WithBasicScheme("Basic")
-    .WithKeyScheme("X-API-Key", "ApiKey");
+    .WithJwtBearer(builder.Configuration.GetRequiredSection<JwtConfiguration>(nameof(JwtConfiguration)))
+    .WithBasicScheme(async (username, password) => {
+        // Your authentication logic here
+        bool isValid = username == "admin" && password == "password123";
+        return new AuthResponse(isValid);
+    }, "Basic")
+    .WithKeyScheme("X-API-Key", async (key) => {
+        // Validate key against database or other source
+        bool isValid = key == "valid-api-key-123";
+        return new AuthResponse(isValid);
+    }, "ApiKey");
 ```
 
 Then in your controllers or actions, specify which schemes to accept:
@@ -350,6 +358,24 @@ public class UserController : ControllerBase
     [Authorize(AuthenticationSchemes = "Basic,ApiKey")]
     public IActionResult AdminAction() { /* ... */ }
 }
+```
+
+### Minimal API with Multiple Schemes
+
+For Minimal APIs, you can use the `RequireAuthorization` extension with specific schemes:
+
+```csharp
+// JWT only endpoint
+app.MapGet("/jwt-only", () => "JWT access granted")
+   .RequireAuthorization(policy => policy.RequireAuthenticationSchemes("Bearer"));
+
+// Basic auth only endpoint  
+app.MapGet("/basic-only", () => "Basic access granted")
+   .RequireAuthorization(policy => policy.RequireAuthenticationSchemes("Basic"));
+
+// Multiple schemes allowed
+app.MapGet("/multi-auth", () => "Multi-auth access granted")
+   .RequireAuthorization(); // Accepts any configured scheme
 ```
 
 ## 🔒 Security Best Practices

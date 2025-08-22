@@ -1,4 +1,5 @@
 using System.Text;
+using System.Linq;
 using Api.Security.Authentication.Core;
 using Api.Security.Authentication.Core.DependencyInjection;
 using Api.Security.Authentication.Jwt.Configurations;
@@ -11,7 +12,7 @@ namespace Api.Security.Authentication.Jwt.DependencyInjection;
 
 public static class AuthenticationBuilderExtensions
 {
-    public static void WithJwtBearer(this AuthenticationBuilder builder, Action<JwtConfiguration> configureOptions, AuthReWriteConfig? reWriteConfig = null)
+    public static AuthenticationBuilder WithJwtBearer(this AuthenticationBuilder builder, Action<JwtConfiguration> configureOptions, AuthReWriteConfig? reWriteConfig = null)
     {
         var jwtConfiguration = new JwtConfiguration
         {
@@ -23,9 +24,10 @@ public static class AuthenticationBuilderExtensions
         configureOptions(jwtConfiguration);
     
         ValidateAndConfigureJwt(builder, jwtConfiguration, reWriteConfig);
+        return builder;
     }
 
-    public static void WithJwtBearer(this AuthenticationBuilder builder, JwtConfiguration jwtConfiguration, AuthReWriteConfig? reWriteConfig = null)
+    public static AuthenticationBuilder WithJwtBearer(this AuthenticationBuilder builder, JwtConfiguration jwtConfiguration, AuthReWriteConfig? reWriteConfig = null)
     {
         builder.Services.Configure<JwtConfiguration>(options => 
         {
@@ -37,6 +39,7 @@ public static class AuthenticationBuilderExtensions
         });
 
         ValidateAndConfigureJwt(builder, jwtConfiguration, reWriteConfig);
+        return builder;
     }
 
     private static void ValidateAndConfigureJwt(AuthenticationBuilder builder, JwtConfiguration jwtConfiguration, AuthReWriteConfig? reWriteConfig)
@@ -45,17 +48,17 @@ public static class AuthenticationBuilderExtensions
             throw new ArgumentException(nameof(JwtConfiguration));
         jwtConfiguration.EnsureIsValid();
         
-        builder.Services.AddScoped<IClaimResolver, ClaimResolver>();
-        builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+        // Only register if not already registered
+        if (!builder.Services.Any(s => s.ServiceType == typeof(IClaimResolver)))
+            builder.Services.AddScoped<IClaimResolver, ClaimResolver>();
+        
+        if (!builder.Services.Any(s => s.ServiceType == typeof(ICurrentUser) && s.ImplementationType?.Namespace == "Api.Security.Authentication.Jwt"))
+            builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         
         if(jwtConfiguration.Session != null)
             builder.Services.FindAndRegisterServices<ISessionManager>();
         
-        builder.Services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(options =>
+        builder.Services.AddAuthentication().AddJwtBearer(options =>
         {
             // Disable automatic claim type conversion (so claim name remains as was initially set)
             //options.MapInboundClaims = false;
