@@ -49,10 +49,10 @@ public static class AuthenticationBuilderExtensions
         jwtConfiguration.EnsureIsValid();
         
         // Only register if not already registered
-        if (!builder.Services.Any(s => s.ServiceType == typeof(IClaimResolver)))
+        if (builder.Services.All(s => s.ServiceType != typeof(IClaimResolver)))
             builder.Services.AddScoped<IClaimResolver, ClaimResolver>();
         
-        if (!builder.Services.Any(s => s.ServiceType == typeof(ICurrentUser) && s.ImplementationType?.Namespace == "Api.Security.Authentication.Jwt"))
+        if (!builder.Services.Any(s => s.ServiceType == typeof(ICurrentUser) && s.ImplementationType?.Namespace == typeof(CurrentUser).Namespace))
             builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         
         if(jwtConfiguration.Session != null)

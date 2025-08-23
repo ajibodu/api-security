@@ -8,6 +8,7 @@ using Api.Security.Authentication.Scheme.DependencyInjection;
 using Api.Security.Authentication.Scheme.Models;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using SampleApiWithMultipleAuth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -114,7 +115,7 @@ app.MapGet("/jwt-only", (CurrentUserProperties currentUser) =>
         authMethod = "JWT Bearer" 
     };
 })
-.RequireAuthorization(policy => policy.RequireAuthenticationSchemes("Bearer"))
+.RequireAuthorizationWithScheme("Bearer")
 .WithName("JwtOnlyEndpoint")
 .WithOpenApi();
 
@@ -126,7 +127,7 @@ app.MapGet("/basic-only", () =>
         authMethod = "Basic" 
     };
 })
-.RequireAuthorization(policy => policy.RequireAuthenticationSchemes("Basic"))
+.RequireAuthorizationWithScheme("Basic")
 .WithName("BasicOnlyEndpoint")
 .WithOpenApi();
 
@@ -138,7 +139,7 @@ app.MapGet("/api-key-only", () =>
         authMethod = "API Key" 
     };
 })
-.RequireAuthorization(policy => policy.RequireAuthenticationSchemes("ApiKey"))
+.RequireAuthorizationWithScheme("ApiKey")
 .WithName("ApiKeyOnlyEndpoint")
 .WithOpenApi();
 
