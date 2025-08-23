@@ -1,0 +1,43 @@
+# Multiple Authentication Schemes Demo
+
+### Test endpoints without authentication (should fail)
+GET http://localhost:5000/jwt-only
+
+### Get JWT Token
+GET http://localhost:5000/token
+
+### Test JWT authentication
+# First get a token from the above endpoint, then use it here
+GET http://localhost:5000/jwt-only
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### Test Basic authentication
+GET http://localhost:5000/basic-only
+Authorization: Basic YWRtaW46cGFzc3dvcmQxMjM=
+
+### Test API Key authentication
+GET http://localhost:5000/api-key-only
+X-API-Key: demo-api-key-12345
+
+### Test Multi-authentication endpoint with Basic auth
+GET http://localhost:5000/multi-auth
+Authorization: Basic YWRtaW46cGFzc3dvcmQxMjM=
+
+### Test Multi-authentication endpoint with API Key
+GET http://localhost:5000/multi-auth
+X-API-Key: demo-api-key-12345
+
+### Test Weather forecast with JWT
+GET http://localhost:5000/weatherforecast
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### Test Weather forecast with Basic auth
+GET http://localhost:5000/weatherforecast
+Authorization: Basic YWRtaW46cGFzc3dvcmQxMjM=
+
+### Test Weather forecast with API Key
+GET http://localhost:5000/weatherforecast
+X-API-Key: demo-api-key-12345
+
+###
+# Note: YWRtaW46cGFzc3dvcmQxMjM= is base64 encoding of "admin:password123"

@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Security.Authentication
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Security.Authentication.Scheme.Test", "..\test\Api.Security.Authentication.Scheme.Test\Api.Security.Authentication.Scheme.Test.csproj", "{C1058D25-63A5-4B91-8870-8437D310537B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApiWithMultipleAuth", "..\sample\SampleApiWithMultipleAuth\SampleApiWithMultipleAuth.csproj", "{7080EA51-0119-4C6E-BE4A-9B29B254FA48}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -142,6 +144,18 @@ Global
 		{C1058D25-63A5-4B91-8870-8437D310537B}.Release|x64.Build.0 = Release|Any CPU
 		{C1058D25-63A5-4B91-8870-8437D310537B}.Release|x86.ActiveCfg = Release|Any CPU
 		{C1058D25-63A5-4B91-8870-8437D310537B}.Release|x86.Build.0 = Release|Any CPU
+		{7080EA51-0119-4C6E-BE4A-9B29B254FA48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7080EA51-0119-4C6E-BE4A-9B29B254FA48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7080EA51-0119-4C6E-BE4A-9B29B254FA48}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7080EA51-0119-4C6E-BE4A-9B29B254FA48}.Debug|x64.Build.0 = Debug|Any CPU
+		{7080EA51-0119-4C6E-BE4A-9B29B254FA48}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7080EA51-0119-4C6E-BE4A-9B29B254FA48}.Debug|x86.Build.0 = Debug|Any CPU
+		{7080EA51-0119-4C6E-BE4A-9B29B254FA48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7080EA51-0119-4C6E-BE4A-9B29B254FA48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7080EA51-0119-4C6E-BE4A-9B29B254FA48}.Release|x64.ActiveCfg = Release|Any CPU
+		{7080EA51-0119-4C6E-BE4A-9B29B254FA48}.Release|x64.Build.0 = Release|Any CPU
+		{7080EA51-0119-4C6E-BE4A-9B29B254FA48}.Release|x86.ActiveCfg = Release|Any CPU
+		{7080EA51-0119-4C6E-BE4A-9B29B254FA48}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -156,5 +170,6 @@ Global
 		{76804964-7006-42D9-ABE5-488B5118CFA1} = {32080DA9-A7C0-4012-A32B-4915183ED143}
 		{4E7CD594-5A44-4A14-8685-CA4B2B31B9A6} = {0C88DD14-F956-CE84-757C-A364CCF449FC}
 		{C1058D25-63A5-4B91-8870-8437D310537B} = {0C88DD14-F956-CE84-757C-A364CCF449FC}
+		{7080EA51-0119-4C6E-BE4A-9B29B254FA48} = {32080DA9-A7C0-4012-A32B-4915183ED143}
 	EndGlobalSection
 EndGlobal
