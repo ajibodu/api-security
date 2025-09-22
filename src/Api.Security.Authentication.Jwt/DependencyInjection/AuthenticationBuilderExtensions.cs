@@ -86,6 +86,7 @@ public static class AuthenticationBuilderExtensions
             if (jwtConfiguration.Session != null)
             {
                 var sessionManager = context.HttpContext.RequestServices.GetRequiredService<ISessionManager>();
+                var currentUser = context.HttpContext.RequestServices.GetRequiredService<ICurrentUser>();
                 var userId = context.Principal?.FindFirst(SystemClaim.Identifier)?.Value;
                 var token = context.HttpContext.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last(); 
                 
@@ -101,7 +102,7 @@ public static class AuthenticationBuilderExtensions
                     return;
                 }
                 
-                if (activeToken != token)
+                if (!currentUser.EqualStandardClaimsEqual(activeToken, token))
                 {
                     context.Fail("Token is no longer valid");
                     return;

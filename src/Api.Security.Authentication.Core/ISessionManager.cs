@@ -22,7 +22,7 @@ public interface ISessionManager
     /// <remarks>
     /// Consider returning a tuple (bool found, string? token) for async idiomatic usage.
     /// </remarks>
-    Task<bool> TryGetValue(string identifier, out string? token);
+    Task<bool> TryGetValue(string identifier, out string token);
 
     /// <summary>
     /// Updates the activity window for the specified session identifier.
