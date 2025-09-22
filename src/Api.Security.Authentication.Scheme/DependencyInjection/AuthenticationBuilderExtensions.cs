@@ -1,3 +1,4 @@
+using System.Linq;
 using Api.Security.Authentication.Scheme.Configurations;
 using Api.Security.Authentication.Scheme.Handlers;
 using Api.Security.Authentication.Scheme.Models;
@@ -9,49 +10,63 @@ namespace Api.Security.Authentication.Scheme.DependencyInjection;
 
 public static class AuthenticationBuilderExtensions
 {
-    public static void WithBasicScheme(this AuthenticationBuilder builder, BasicConfiguration configuration, string schemeName = "Basic")
+    private static void RegisterCurrentUserIfNotExists(AuthenticationBuilder builder)
     {
-        builder.WithBasicScheme((userName, password) => Task.FromResult(new AuthResponse(userName == configuration.UserName && password == configuration.Password)), schemeName);
+        // Only register if not already registered by another authentication scheme
+        if (!builder.Services.Any(s => s.ServiceType == typeof(ICurrentUser) && s.ImplementationType?.Namespace == typeof(CurrentUser).Namespace))
+            builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+    }
+    public static AuthenticationBuilder WithBasicScheme(this AuthenticationBuilder builder, BasicConfiguration configuration, string schemeName = "Basic")
+    {
+        return builder.WithBasicScheme((userName, password) => Task.FromResult(new AuthResponse(userName == configuration.UserName && password == configuration.Password)), schemeName);
     }
     
-    public static void WithBasicScheme<TBasicAuthService>(this AuthenticationBuilder builder, string schemeName = "Basic") where TBasicAuthService : class, IBasicAuthenticationService
+    public static AuthenticationBuilder WithBasicScheme<TBasicAuthService>(this AuthenticationBuilder builder, string schemeName = "Basic") where TBasicAuthService : class, IBasicAuthenticationService
     {
         builder.Services.AddScoped<IBasicAuthenticationService, TBasicAuthService>();
-        builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         
-        builder.Services.AddAuthentication(schemeName)
+        RegisterCurrentUserIfNotExists(builder);
+        
+        builder.Services.AddAuthentication()
             .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(schemeName, null);
+        return builder;
     }
     
-    public static void WithBasicScheme(this AuthenticationBuilder builder, Func<string, string, Task<AuthResponse>> authenticateFunc, string schemeName = "Basic")
+    public static AuthenticationBuilder WithBasicScheme(this AuthenticationBuilder builder, Func<string, string, Task<AuthResponse>> authenticateFunc, string schemeName = "Basic")
     {
         builder.Services.AddSingleton<IBasicAuthenticationService>(new DelegateBasicAuthenticationService(authenticateFunc));
-        builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         
-        builder.Services.AddAuthentication(schemeName)
+        RegisterCurrentUserIfNotExists(builder);
+        
+        builder.Services.AddAuthentication()
             .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(schemeName, null);
+        return builder;
     }
     
-    public static void WithKeyScheme(this AuthenticationBuilder builder, SimpleKeyConfiguration configuration, string schemeName = "Basic")
+    public static AuthenticationBuilder WithKeyScheme(this AuthenticationBuilder builder, SimpleKeyConfiguration configuration, string schemeName = "ApiKey")
     {
-        builder.WithKeyScheme(configuration.HeaderName, (headerValue) => Task.FromResult(new AuthResponse(headerValue == configuration.HeaderValue)), schemeName);
+        return builder.WithKeyScheme(configuration.HeaderName, (headerValue) => Task.FromResult(new AuthResponse(headerValue == configuration.HeaderValue)), schemeName);
     }
     
-    public static void WithKeyScheme<TKeyAuthService>(this AuthenticationBuilder builder, string headerName, string schemeName = "Basic") where TKeyAuthService : class, IKeyAuthenticationService
+    public static AuthenticationBuilder WithKeyScheme<TKeyAuthService>(this AuthenticationBuilder builder, string headerName, string schemeName = "ApiKey") where TKeyAuthService : class, IKeyAuthenticationService
     {
         builder.Services.AddScoped<IKeyAuthenticationService, TKeyAuthService>();
-        builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         
-        builder.Services.AddAuthentication(schemeName)
+        RegisterCurrentUserIfNotExists(builder);
+        
+        builder.Services.AddAuthentication()
             .AddScheme<KeyConfiguration, KeyAuthenticationHandler>(schemeName, null, options => options.HeaderName = headerName);
+        return builder;
     }
     
-    public static void WithKeyScheme(this AuthenticationBuilder builder, string headerName, Func<string, Task<AuthResponse>> authenticateFunc, string schemeName = "Basic")
+    public static AuthenticationBuilder WithKeyScheme(this AuthenticationBuilder builder, string headerName, Func<string, Task<AuthResponse>> authenticateFunc, string schemeName = "ApiKey")
     {
         builder.Services.AddSingleton<IKeyAuthenticationService>(new DelegateKeyAuthenticationService(authenticateFunc));
-        builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         
-        builder.Services.AddAuthentication(schemeName)
+        RegisterCurrentUserIfNotExists(builder);
+        
+        builder.Services.AddAuthentication()
             .AddScheme<KeyConfiguration, KeyAuthenticationHandler>(schemeName, null, options => options.HeaderName = headerName);
+        return builder;
     }
 }
