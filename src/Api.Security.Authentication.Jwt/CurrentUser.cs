@@ -142,27 +142,6 @@ public class CurrentUser : ClaimResolver, ICurrentUser
         await _sessionManager.RemoveAsync(GetRequiredClaimValue(SystemClaim.Identifier));
     }
     
-    public bool EqualStandardClaimsEqual(string token1, string token2)
-    {
-        var handler = new JwtSecurityTokenHandler();
-        var jwt1 = handler.ReadJwtToken(token1);
-        var jwt2 = handler.ReadJwtToken(token2);
-
-        var claims1 = jwt1.Claims
-            .Where(c => !_defaultClaimTypesToExclude.Contains(c.Type))
-            .OrderBy(c => c.Type)
-            .ThenBy(c => c.Value)
-            .ToList();
-
-        var claims2 = jwt2.Claims
-            .Where(c => !_defaultClaimTypesToExclude.Contains(c.Type))
-            .OrderBy(c => c.Type)
-            .ThenBy(c => c.Value)
-            .ToList();
-
-        return claims1.SequenceEqual(claims2, ClaimComparer.Instance);
-    }
-    
     private readonly HashSet<string> _defaultClaimTypesToExclude =
     [
         JwtRegisteredClaimNames.Iat,

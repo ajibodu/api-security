@@ -147,12 +147,9 @@ public class AuthenticationIntegrationTests
         using var server = CreateServer(jwtConfig, services =>
         {
             var sessionManagerMock = new Mock<ISessionManager>();
-            var currentUser = new Mock<ICurrentUser>();
             sessionManagerMock.Setup(m => m.TryGetValue(userId, out token)).ReturnsAsync(true);
             sessionManagerMock.Setup(m => m.UpdateActivityAsync(userId, 10)).Returns(Task.CompletedTask);
-            currentUser.Setup(m => m.EqualStandardClaimsEqual(token, token)).Returns(true);
             services.AddSingleton(sessionManagerMock.Object);
-            services.AddSingleton(currentUser.Object);
         });
         using var client = server.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, token);

@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Linq;
 using Api.Security.Authentication.Core;
@@ -89,7 +90,6 @@ public static class AuthenticationBuilderExtensions
             if (jwtConfiguration.Session != null)
             {
                 var sessionManager = context.HttpContext.RequestServices.GetRequiredService<ISessionManager>();
-                //var currentUser = context.HttpContext.RequestServices.GetRequiredService<ICurrentUser>();
                 var userId = context.Principal?.FindFirst(SystemClaim.Identifier)?.Value;
                 var token = context.HttpContext.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last(); 
                 
@@ -105,11 +105,11 @@ public static class AuthenticationBuilderExtensions
                     return;
                 }
                 
-                // if (!currentUser.EqualStandardClaimsEqual(activeToken, token))
-                // {
-                //     context.Fail("Token is no longer valid");
-                //     return;
-                // }
+                if (!EqualStandardClaimsEqual(activeToken, token))
+                {
+                    context.Fail("Token is no longer valid");
+                    return;
+                }
 
                 await sessionManager.UpdateActivityAsync(userId, jwtConfiguration.Session.ActivityWindowMinutes);
             }
@@ -161,4 +161,36 @@ public static class AuthenticationBuilderExtensions
             _ => null
         };
     }
+    
+    private static bool EqualStandardClaimsEqual(string token1, string token2)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jwt1 = handler.ReadJwtToken(token1);
+        var jwt2 = handler.ReadJwtToken(token2);
+
+        var claims1 = jwt1.Claims
+            .Where(c => !DefaultClaimTypesToExclude.Contains(c.Type))
+            .OrderBy(c => c.Type)
+            .ThenBy(c => c.Value)
+            .ToList();
+
+        var claims2 = jwt2.Claims
+            .Where(c => !DefaultClaimTypesToExclude.Contains(c.Type))
+            .OrderBy(c => c.Type)
+            .ThenBy(c => c.Value)
+            .ToList();
+
+        return claims1.SequenceEqual(claims2, ClaimComparer.Instance);
+    }
+    
+    private static readonly HashSet<string> DefaultClaimTypesToExclude =
+    [
+        JwtRegisteredClaimNames.Iat,
+        JwtRegisteredClaimNames.Iss,
+        JwtRegisteredClaimNames.Aud,
+        JwtRegisteredClaimNames.Exp,
+        JwtRegisteredClaimNames.Nbf,
+        JwtRegisteredClaimNames.Sub,
+        JwtRegisteredClaimNames.Jti
+    ];
 }
