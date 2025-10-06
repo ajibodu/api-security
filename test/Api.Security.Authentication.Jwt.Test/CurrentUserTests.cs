@@ -6,6 +6,7 @@ using Api.Security.Authentication.Core;
 using Api.Security.Authentication.Jwt;
 using Api.Security.Authentication.Jwt.Configurations;
 using Api.Security.Authentication.Jwt.Models;
+using AutoFixture.Xunit2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -136,6 +137,17 @@ public class CurrentUserTests
         sessionManager.Setup(m => m.RemoveAsync("user1")).Returns(Task.CompletedTask).Verifiable();
         var currentUser = new CurrentUser(GetHttpContextAccessor(claims), GetOptionsWithSession(), sessionManager.Object);
         await currentUser.RevokeJwtAsync();
+        sessionManager.Verify();
+    }
+    
+    [Theory, AutoData]
+    public async Task RevokeJwtAsync_CallsSessionManagerRemove_WithIdentifier_Async(string identifier)
+    {
+        var claims = new List<Claim> { new Claim(SystemClaim.Identifier, identifier) };
+        var sessionManager = new Mock<ISessionManager>();
+        sessionManager.Setup(m => m.RemoveAsync(identifier)).Returns(Task.CompletedTask).Verifiable();
+        var currentUser = new CurrentUser(GetHttpContextAccessor(claims), GetOptionsWithSession(), sessionManager.Object);
+        await currentUser.RevokeJwtAsync(identifier);
         sessionManager.Verify();
     }
 

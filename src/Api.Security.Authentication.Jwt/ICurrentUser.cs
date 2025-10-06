@@ -11,4 +11,5 @@ public interface ICurrentUser : IClaimResolver
     public bool VerifyJwtAsync(string jwtToken);
     IList<CustomClaim> GetJwtClaimsAsync(string jwtToken);
     Task RevokeJwtAsync();
+    Task RevokeJwtAsync(string identifier);
 }
