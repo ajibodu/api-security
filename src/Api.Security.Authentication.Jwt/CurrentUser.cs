@@ -142,6 +142,14 @@ public class CurrentUser : ClaimResolver, ICurrentUser
         await _sessionManager.RemoveAsync(GetRequiredClaimValue(SystemClaim.Identifier));
     }
     
+    public async Task RevokeJwtAsync(string identifier)
+    {
+        if(_sessionManager == null)
+            throw new InvalidOperationException($"Mission Implementation of {nameof(ISessionManager)}");
+        
+        await _sessionManager.RemoveAsync(identifier);
+    }
+    
     private readonly HashSet<string> _defaultClaimTypesToExclude =
     [
         JwtRegisteredClaimNames.Iat,
