@@ -17,8 +17,6 @@ public class CurrentUser : ClaimResolver, ICurrentUser
 
     public CurrentUser(IHttpContextAccessor context, IOptions<JwtConfiguration> configuration, ISessionManager? sessionManager = null) : base(context)
     {
-        if (context?.HttpContext == null)
-            return;
         _jwtConfiguration = configuration.Value;
 
         // Only require sessionManager if Session is configured
